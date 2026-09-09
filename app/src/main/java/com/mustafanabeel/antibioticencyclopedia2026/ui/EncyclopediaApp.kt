@@ -632,7 +632,7 @@ private fun CategoryCard(category: CategorySpec, onClick: () -> Unit) {
             }
             Column {
                 Text(category.title, fontWeight = FontWeight.Bold, maxLines = 2)
-                LtrText(category.subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp, maxLines = 1)
+                Text(category.subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp, maxLines = 1)
                 Spacer(Modifier.height(6.dp))
                 Text(
                     "${category.count} ${category.countLabel}",
@@ -703,7 +703,7 @@ private fun ReferenceToolRow(
             Spacer(Modifier.width(10.dp))
             Column {
                 Text(title, fontWeight = FontWeight.Bold)
-                LtrText(subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                Text(subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
             }
         }
     }

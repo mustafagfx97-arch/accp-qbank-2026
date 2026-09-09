@@ -257,6 +257,16 @@ class EncyclopediaRepository(private val context: Context) {
             "a0f0c70491d8c30d2d906ac1ce8b78160c60687ad4806aaaa792ca3e1dc5f401"
 
         private val QUERY_EXPANSIONS = mapOf(
+            "لاهوائيات" to "anaerobes",
+            "لاهوائي" to "anaerobe",
+            "زائفة" to "pseudomonas",
+            "عنقودية" to "staphylococcus",
+            "عقدية" to "streptococcus",
+            "معويات" to "enterobacterales",
+            "سحايا" to "meningitis",
+            "بروستات" to "prostate",
+            "خراج" to "abscess",
+            "إنتان" to "sepsis",
             "رئة" to "pneumonia",
             "تنفسي" to "respiratory",
             "بول" to "urinary",
