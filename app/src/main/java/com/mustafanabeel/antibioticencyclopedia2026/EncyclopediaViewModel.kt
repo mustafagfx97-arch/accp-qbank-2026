@@ -24,6 +24,11 @@ data class LoadState(
     val error: String? = null,
 )
 
+enum class UiLanguage {
+    ARABIC,
+    ENGLISH,
+}
+
 @OptIn(FlowPreview::class)
 class EncyclopediaViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = EncyclopediaRepository(application)
@@ -42,6 +47,15 @@ class EncyclopediaViewModel(application: Application) : AndroidViewModel(applica
         preferences.getStringSet(BOOKMARK_KEY, emptySet())?.toSet().orEmpty()
     )
     val bookmarks: StateFlow<Set<String>> = _bookmarks
+
+    private val _uiLanguage = MutableStateFlow(
+        if (preferences.getString(LANGUAGE_KEY, ARABIC_CODE) == ENGLISH_CODE) {
+            UiLanguage.ENGLISH
+        } else {
+            UiLanguage.ARABIC
+        }
+    )
+    val uiLanguage: StateFlow<UiLanguage> = _uiLanguage
 
     val results: StateFlow<List<SearchItem>> = combine(
         _loadState,
@@ -63,7 +77,7 @@ class EncyclopediaViewModel(application: Application) : AndroidViewModel(applica
                 .onFailure { error ->
                     _loadState.value = LoadState(
                         loading = false,
-                        error = error.message ?: "تعذر تحميل الموسوعة.",
+                        error = error.message ?: "The offline clinical database could not be loaded.",
                     )
                 }
         }
@@ -97,6 +111,18 @@ class EncyclopediaViewModel(application: Application) : AndroidViewModel(applica
         preferences.edit().putStringSet(BOOKMARK_KEY, changed).apply()
     }
 
+    fun toggleLanguage() {
+        val changed = if (_uiLanguage.value == UiLanguage.ARABIC) {
+            UiLanguage.ENGLISH
+        } else {
+            UiLanguage.ARABIC
+        }
+        _uiLanguage.value = changed
+        preferences.edit()
+            .putString(LANGUAGE_KEY, if (changed == UiLanguage.ENGLISH) ENGLISH_CODE else ARABIC_CODE)
+            .apply()
+    }
+
     fun bookmarkedItems(): List<SearchItem> {
         val data = _loadState.value.dataset ?: return emptyList()
         val ids = _bookmarks.value
@@ -107,5 +133,8 @@ class EncyclopediaViewModel(application: Application) : AndroidViewModel(applica
 
     companion object {
         private const val BOOKMARK_KEY = "bookmarked_ids"
+        private const val LANGUAGE_KEY = "ui_language"
+        private const val ARABIC_CODE = "ar"
+        private const val ENGLISH_CODE = "en"
     }
 }

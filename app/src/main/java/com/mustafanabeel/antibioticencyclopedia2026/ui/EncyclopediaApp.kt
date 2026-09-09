@@ -67,6 +67,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -89,6 +90,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.mustafanabeel.antibioticencyclopedia2026.EncyclopediaViewModel
+import com.mustafanabeel.antibioticencyclopedia2026.UiLanguage
 import com.mustafanabeel.antibioticencyclopedia2026.data.ContentFilter
 import com.mustafanabeel.antibioticencyclopedia2026.data.DrugRecord
 import com.mustafanabeel.antibioticencyclopedia2026.data.EncyclopediaDataset
@@ -104,6 +106,12 @@ private const val HOME = "home"
 private const val SEARCH = "search"
 private const val SAVED = "saved"
 private const val ABOUT = "about"
+
+private val LocalUiLanguage = staticCompositionLocalOf { UiLanguage.ARABIC }
+private val LocalToggleLanguage = staticCompositionLocalOf<() -> Unit> { {} }
+
+private fun UiLanguage.text(arabic: String, english: String): String =
+    if (this == UiLanguage.ARABIC) arabic else english
 
 private data class BottomDestination(
     val route: String,
@@ -123,7 +131,13 @@ private data class CategorySpec(
 @Composable
 fun EncyclopediaApp(viewModel: EncyclopediaViewModel) {
     val state by viewModel.loadState.collectAsStateWithLifecycle()
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+    val language by viewModel.uiLanguage.collectAsStateWithLifecycle()
+    val direction = if (language == UiLanguage.ARABIC) LayoutDirection.Rtl else LayoutDirection.Ltr
+    CompositionLocalProvider(
+        LocalLayoutDirection provides direction,
+        LocalUiLanguage provides language,
+        LocalToggleLanguage provides viewModel::toggleLanguage,
+    ) {
         when {
             state.loading -> LoadingScreen()
             state.error != null -> ErrorScreen(state.error.orEmpty(), viewModel::reload)
@@ -134,31 +148,57 @@ fun EncyclopediaApp(viewModel: EncyclopediaViewModel) {
 
 @Composable
 private fun LoadingScreen() {
+    val language = LocalUiLanguage.current
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             CircularProgressIndicator(color = ClinicalTeal)
             Spacer(Modifier.height(18.dp))
-            Text("جارٍ تجهيز الموسوعة الطبية…", style = MaterialTheme.typography.titleMedium)
+            Text(
+                language.text("جارٍ تجهيز الموسوعة الطبية…", "Preparing the clinical encyclopedia…"),
+                style = MaterialTheme.typography.titleMedium,
+            )
             Spacer(Modifier.height(6.dp))
-            LtrText("Loading the offline clinical database", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                language.text("تحميل قاعدة البيانات السريرية دون إنترنت", "Loading the offline clinical database"),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
 
 @Composable
 private fun ErrorScreen(message: String, onRetry: () -> Unit) {
+    val language = LocalUiLanguage.current
     Box(Modifier.fillMaxSize().padding(28.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(Icons.Default.Info, null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(44.dp))
             Spacer(Modifier.height(12.dp))
-            Text("تعذر فتح الموسوعة", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Text(
+                language.text("تعذر فتح الموسوعة", "The encyclopedia could not be opened"),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+            )
             Spacer(Modifier.height(8.dp))
             LtrText(message, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
             Spacer(Modifier.height(16.dp))
-            AssistChip(onClick = onRetry, label = { Text("إعادة المحاولة") }, leadingIcon = {
+            AssistChip(onClick = onRetry, label = {
+                Text(language.text("إعادة المحاولة", "Try again"))
+            }, leadingIcon = {
                 Icon(Icons.Default.Refresh, null)
             })
         }
+    }
+}
+
+@Composable
+private fun LanguageToggle() {
+    val language = LocalUiLanguage.current
+    val toggleLanguage = LocalToggleLanguage.current
+    FilledTonalIconButton(onClick = toggleLanguage) {
+        Text(
+            text = if (language == UiLanguage.ARABIC) "EN" else "ع",
+            fontWeight = FontWeight.ExtraBold,
+        )
     }
 }
 
@@ -248,10 +288,11 @@ private fun EncyclopediaNavigation(
 
 @Composable
 private fun RootNavigationBar(navController: NavHostController, currentRoute: String?) {
+    val language = LocalUiLanguage.current
     val destinations = listOf(
-        BottomDestination(HOME, "الرئيسية", Icons.Default.Home),
-        BottomDestination(SEARCH, "البحث", Icons.Default.Search),
-        BottomDestination(SAVED, "المحفوظات", Icons.Default.Bookmark),
+        BottomDestination(HOME, language.text("الرئيسية", "Home"), Icons.Default.Home),
+        BottomDestination(SEARCH, language.text("البحث", "Search"), Icons.Default.Search),
+        BottomDestination(SAVED, language.text("المحفوظات", "Saved"), Icons.Default.Bookmark),
     )
     NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
         destinations.forEach { destination ->
@@ -279,15 +320,16 @@ private fun HomeScreen(
     onCategory: (ContentFilter) -> Unit,
     onAbout: () -> Unit,
 ) {
+    val language = LocalUiLanguage.current
     var query by remember { mutableStateOf("") }
-    val categories = remember(dataset) {
+    val categories = remember(dataset, language) {
         listOf(
-            CategorySpec(ContentFilter.ANTIBIOTIC, "المضادات الحيوية", "Drug monographs", dataset.drugs.size, Icons.Default.Medication, ClinicalTeal),
-            CategorySpec(ContentFilter.INFECTION, "مكان العدوى", "Empiric therapy", dataset.entries.count { it.kind == "infection" }, Icons.Default.LocalHospital, DoseAmber),
-            CategorySpec(ContentFilter.BACTERIA, "نوع البكتيريا", "Organism-directed", dataset.entries.count { it.kind == "bacteria" }, Icons.Default.Biotech, CultureViolet),
-            CategorySpec(ContentFilter.DISTRIBUTION, "الانتشار داخل الجسم", "Tissue penetration", dataset.entries.count { it.kind == "distribution" }, Icons.Default.Public, RenalBlue),
-            CategorySpec(ContentFilter.CULTURE, "الزرع والتشخيص", "Culture · AST · MIC", dataset.entries.count { it.kind == "culture" }, Icons.Default.Science, HepaticRose),
-            CategorySpec(ContentFilter.QUICK, "دليل الجناح السريع", "Ward pocket guides", dataset.entries.count { it.quick || it.kind == "quick" }, Icons.Default.Speed, DoseAmber),
+            CategorySpec(ContentFilter.ANTIBIOTIC, language.text("المضادات الحيوية", "Antibiotics"), "Drug monographs", dataset.drugs.size, Icons.Default.Medication, ClinicalTeal),
+            CategorySpec(ContentFilter.INFECTION, language.text("مكان العدوى", "Infection site"), "Empiric therapy", dataset.entries.count { it.kind == "infection" }, Icons.Default.LocalHospital, DoseAmber),
+            CategorySpec(ContentFilter.BACTERIA, language.text("نوع البكتيريا", "Bacteria"), "Organism-directed", dataset.entries.count { it.kind == "bacteria" }, Icons.Default.Biotech, CultureViolet),
+            CategorySpec(ContentFilter.DISTRIBUTION, language.text("الانتشار داخل الجسم", "Body distribution"), "Tissue penetration", dataset.entries.count { it.kind == "distribution" }, Icons.Default.Public, RenalBlue),
+            CategorySpec(ContentFilter.CULTURE, language.text("الزرع والتشخيص", "Culture & diagnostics"), "Culture · AST · MIC", dataset.entries.count { it.kind == "culture" }, Icons.Default.Science, HepaticRose),
+            CategorySpec(ContentFilter.QUICK, language.text("دليل الجناح السريع", "Ward quick guide"), "Ward pocket guides", dataset.entries.count { it.quick || it.kind == "quick" }, Icons.Default.Speed, DoseAmber),
         )
     }
     LazyColumn(
@@ -313,12 +355,27 @@ private fun HomeScreen(
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.ExtraBold,
                             )
-                            Text("موسوعة المضادات السريرية 2026", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(
+                                language.text(
+                                    "موسوعة المضادات السريرية 2026",
+                                    "Offline clinical reference · 2026",
+                                ),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                         }
-                        IconButton(onClick = onAbout) { Icon(Icons.Default.Info, "المصادر") }
+                        LanguageToggle()
+                        IconButton(onClick = onAbout) {
+                            Icon(Icons.Default.Info, language.text("المصادر", "Sources"))
+                        }
                     }
                     Spacer(Modifier.height(20.dp))
-                    Text("ابحث عن دواء، جرثومة، موقع عدوى أو نسيج", fontWeight = FontWeight.SemiBold)
+                    Text(
+                        language.text(
+                            "ابحث عن دواء، جرثومة، موقع عدوى أو نسيج",
+                            "Search by drug, organism, infection site, or tissue",
+                        ),
+                        fontWeight = FontWeight.SemiBold,
+                    )
                     Spacer(Modifier.height(8.dp))
                     OutlinedTextField(
                         value = query,
@@ -330,7 +387,7 @@ private fun HomeScreen(
                         leadingIcon = { Icon(Icons.Default.Search, null) },
                         trailingIcon = {
                             if (query.isNotBlank()) IconButton(onClick = { query = "" }) {
-                                Icon(Icons.Default.Close, "مسح")
+                                Icon(Icons.Default.Close, language.text("مسح", "Clear"))
                             }
                         },
                         keyboardOptions = KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Search),
@@ -343,7 +400,7 @@ private fun HomeScreen(
                     ) {
                         Icon(Icons.Default.Search, null)
                         Spacer(Modifier.width(8.dp))
-                        Text("بحث شامل")
+                        Text(language.text("بحث شامل", "Search all sources"))
                     }
                 }
             }
@@ -353,14 +410,14 @@ private fun HomeScreen(
                 Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                StatPill("${dataset.drugs.size}", "دواء", Modifier.weight(1f))
-                StatPill("${dataset.entries.size}", "سجل", Modifier.weight(1f))
-                StatPill("${dataset.sources.sumOf { it.pages }}", "صفحة مصدر", Modifier.weight(1f))
+                StatPill("${dataset.drugs.size}", language.text("دواء", "Drugs"), Modifier.weight(1f))
+                StatPill("${dataset.entries.size}", language.text("سجل", "Entries"), Modifier.weight(1f))
+                StatPill("${dataset.sources.sumOf { it.pages }}", language.text("صفحة مصدر", "Source pages"), Modifier.weight(1f))
             }
         }
         item {
             Text(
-                "استكشف الموسوعة",
+                language.text("استكشف الموسوعة", "Explore the encyclopedia"),
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
@@ -398,6 +455,7 @@ private fun StatPill(value: String, label: String, modifier: Modifier = Modifier
 
 @Composable
 private fun CategoryCard(category: CategorySpec, onClick: () -> Unit) {
+    val language = LocalUiLanguage.current
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().height(188.dp),
@@ -413,7 +471,12 @@ private fun CategoryCard(category: CategorySpec, onClick: () -> Unit) {
                 Text(category.title, fontWeight = FontWeight.Bold, maxLines = 2)
                 LtrText(category.subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp, maxLines = 1)
                 Spacer(Modifier.height(6.dp))
-                LtrText("${category.count} entries", color = category.tint, fontWeight = FontWeight.SemiBold, fontSize = 12.sp)
+                Text(
+                    language.text("${category.count} سجل", "${category.count} entries"),
+                    color = category.tint,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp,
+                )
             }
         }
     }
@@ -426,6 +489,7 @@ private fun SearchScreen(
     onOpenDrug: (String) -> Unit,
     onOpenEntry: (String) -> Unit,
 ) {
+    val language = LocalUiLanguage.current
     val query by viewModel.query.collectAsStateWithLifecycle()
     val filter by viewModel.filter.collectAsStateWithLifecycle()
     val results by viewModel.results.collectAsStateWithLifecycle()
@@ -434,10 +498,15 @@ private fun SearchScreen(
         TopAppBar(
             title = {
                 Column {
-                    Text("البحث السريري", fontWeight = FontWeight.Bold)
-                    LtrText("Search every source", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(language.text("البحث السريري", "Clinical search"), fontWeight = FontWeight.Bold)
+                    Text(
+                        language.text("البحث في جميع المصادر", "Search every source"),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             },
+            actions = { LanguageToggle() },
             colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
         )
         OutlinedTextField(
@@ -446,11 +515,15 @@ private fun SearchScreen(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
             singleLine = true,
             shape = RoundedCornerShape(18.dp),
-            placeholder = { Text("دواء، بكتيريا، عدوى، عضو…") },
+            placeholder = {
+                Text(language.text("دواء، بكتيريا، عدوى، عضو…", "Drug, bacteria, infection, tissue…"))
+            },
             leadingIcon = { Icon(Icons.Default.Search, null) },
             trailingIcon = {
                 AnimatedVisibility(query.isNotBlank()) {
-                    IconButton(onClick = { viewModel.setQuery("") }) { Icon(Icons.Default.Close, "مسح") }
+                    IconButton(onClick = { viewModel.setQuery("") }) {
+                        Icon(Icons.Default.Close, language.text("مسح", "Clear"))
+                    }
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Search),
@@ -463,7 +536,9 @@ private fun SearchScreen(
                 FilterChip(
                     selected = filter == item,
                     onClick = { viewModel.setFilter(item) },
-                    label = { Text(item.arabicLabel) },
+                    label = {
+                        Text(if (language == UiLanguage.ARABIC) item.arabicLabel else item.englishLabel)
+                    },
                 )
             }
         }
@@ -471,12 +546,21 @@ private fun SearchScreen(
             Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("${results.size} نتيجة", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                language.text("${results.size} نتيجة", "${results.size} results"),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             Spacer(Modifier.weight(1f))
             LtrText(filter.englishLabel, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
         }
         if (results.isEmpty()) {
-            EmptyState("لا توجد نتيجة مطابقة", "جرّب الاسم العلمي، الاختصار أو غيّر نوع البحث.")
+            EmptyState(
+                language.text("لا توجد نتيجة مطابقة", "No matching results"),
+                language.text(
+                    "جرّب الاسم العلمي، الاختصار أو غيّر نوع البحث.",
+                    "Try a generic name, abbreviation, or a different search category.",
+                ),
+            )
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -508,6 +592,7 @@ private fun SearchResultCard(
     onBookmark: () -> Unit,
     onClick: () -> Unit,
 ) {
+    val language = LocalUiLanguage.current
     val tint = kindColor(item.kind)
     Card(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
@@ -534,7 +619,7 @@ private fun SearchResultCard(
                 IconButton(onClick = onBookmark) {
                     Icon(
                         if (bookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                        "حفظ",
+                        language.text("حفظ", "Save"),
                         tint = if (bookmarked) DoseAmber else MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
@@ -559,15 +644,23 @@ private fun SavedScreen(
     onOpenDrug: (String) -> Unit,
     onOpenEntry: (String) -> Unit,
 ) {
+    val language = LocalUiLanguage.current
     val bookmarks by viewModel.bookmarks.collectAsStateWithLifecycle()
     val items = remember(bookmarks) { viewModel.bookmarkedItems() }
     Column(Modifier.fillMaxSize()) {
         TopAppBar(
-            title = { Text("المحفوظات", fontWeight = FontWeight.Bold) },
+            title = { Text(language.text("المحفوظات", "Saved items"), fontWeight = FontWeight.Bold) },
+            actions = { LanguageToggle() },
             colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
         )
         if (items.isEmpty()) {
-            EmptyState("لا توجد عناصر محفوظة", "اضغط علامة الحفظ على أي دواء أو جدول للعودة إليه سريعًا.")
+            EmptyState(
+                language.text("لا توجد عناصر محفوظة", "No saved items"),
+                language.text(
+                    "اضغط علامة الحفظ على أي دواء أو جدول للعودة إليه سريعًا.",
+                    "Tap the bookmark icon on any drug or reference to find it here.",
+                ),
+            )
         } else {
             LazyColumn(
                 contentPadding = PaddingValues(14.dp),
@@ -601,16 +694,22 @@ private fun DrugDetailScreen(
     onBack: () -> Unit,
     onOpenEntry: (String) -> Unit,
 ) {
+    val language = LocalUiLanguage.current
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("بطاقة الدواء", fontWeight = FontWeight.Bold) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "رجوع") } },
+                title = { Text(language.text("بطاقة الدواء", "Drug monograph"), fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, language.text("رجوع", "Back"))
+                    }
+                },
                 actions = {
+                    LanguageToggle()
                     IconButton(onClick = onBookmark) {
                         Icon(
                             if (bookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                            "حفظ",
+                            language.text("حفظ", "Save"),
                             tint = if (bookmarked) DoseAmber else MaterialTheme.colorScheme.onSurface,
                         )
                     }
@@ -667,8 +766,18 @@ private fun DrugDetailScreen(
             if (related.isNotEmpty()) {
                 item {
                     Column(Modifier.padding(top = 8.dp)) {
-                        Text("الأدلة المرتبطة", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                        LtrText("Organisms, infection sites, spectrum and distribution", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            language.text("الأدلة المرتبطة", "Related evidence"),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            language.text(
+                                "البكتيريا، مواقع العدوى، الطيف والتوزيع",
+                                "Organisms, infection sites, spectrum and distribution",
+                            ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
                 }
                 items(related.take(18), key = ReferenceEntry::id) { entry ->
@@ -693,6 +802,7 @@ private fun ClinicalSection(
     tint: Color,
     icon: ImageVector,
 ) {
+    val language = LocalUiLanguage.current
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         border = BorderStroke(1.dp, tint.copy(alpha = 0.32f)),
@@ -705,8 +815,10 @@ private fun ClinicalSection(
                 }
                 Spacer(Modifier.width(10.dp))
                 Column {
-                    Text(arabicTitle, fontWeight = FontWeight.Bold)
-                    LtrText(englishTitle, color = tint, style = MaterialTheme.typography.labelMedium)
+                    Text(language.text(arabicTitle, englishTitle), fontWeight = FontWeight.Bold)
+                    if (language == UiLanguage.ARABIC) {
+                        LtrText(englishTitle, color = tint, style = MaterialTheme.typography.labelMedium)
+                    }
                 }
             }
             Spacer(Modifier.height(12.dp))
@@ -717,6 +829,7 @@ private fun ClinicalSection(
 
 @Composable
 private fun EvidenceRow(entry: ReferenceEntry, onClick: () -> Unit) {
+    val language = LocalUiLanguage.current
     Surface(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
         shape = RoundedCornerShape(15.dp),
@@ -729,7 +842,11 @@ private fun EvidenceRow(entry: ReferenceEntry, onClick: () -> Unit) {
             Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
                 LtrText(entry.title, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                LtrText("${kindEnglish(entry.kind)} · page ${entry.page}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                LtrText(
+                    "${kindEnglish(entry.kind)} · ${language.text("صفحة", "page")} ${entry.page}",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 12.sp,
+                )
             }
         }
     }
@@ -743,16 +860,27 @@ private fun EntryDetailScreen(
     onBookmark: () -> Unit,
     onBack: () -> Unit,
 ) {
+    val language = LocalUiLanguage.current
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(kindArabic(entry.kind), fontWeight = FontWeight.Bold) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "رجوع") } },
+                title = {
+                    Text(
+                        if (language == UiLanguage.ARABIC) kindArabic(entry.kind) else kindTitleEnglish(entry.kind),
+                        fontWeight = FontWeight.Bold,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, language.text("رجوع", "Back"))
+                    }
+                },
                 actions = {
+                    LanguageToggle()
                     IconButton(onClick = onBookmark) {
                         Icon(
                             if (bookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                            "حفظ",
+                            language.text("حفظ", "Save"),
                             tint = if (bookmarked) DoseAmber else MaterialTheme.colorScheme.onSurface,
                         )
                     }
@@ -806,11 +934,22 @@ private fun EntryDetailScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SourcesScreen(dataset: EncyclopediaDataset, onBack: () -> Unit) {
+    val language = LocalUiLanguage.current
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("المصادر وسلامة المحتوى", fontWeight = FontWeight.Bold) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "رجوع") } },
+                title = {
+                    Text(
+                        language.text("المصادر وسلامة المحتوى", "Sources & content safety"),
+                        fontWeight = FontWeight.Bold,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, language.text("رجوع", "Back"))
+                    }
+                },
+                actions = { LanguageToggle() },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
             )
         },
@@ -827,7 +966,12 @@ private fun SourcesScreen(dataset: EncyclopediaDataset, onBack: () -> Unit) {
             }
             item { SafetyBanner(dataset.safetyNotice) }
             item {
-                Text("الملفات المعتمدة", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 8.dp))
+                Text(
+                    language.text("الملفات المعتمدة", "Included source editions"),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
             }
             items(dataset.sources, key = { it.id }) { source ->
                 Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(16.dp)) {
@@ -836,7 +980,14 @@ private fun SourcesScreen(dataset: EncyclopediaDataset, onBack: () -> Unit) {
                         Spacer(Modifier.height(4.dp))
                         LtrText(source.role, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(Modifier.height(7.dp))
-                        LtrText("${source.pages} pages · SHA-256 ${source.sha256.take(12)}…", fontSize = 12.sp, color = MaterialTheme.colorScheme.primary)
+                        LtrText(
+                            language.text(
+                                "${source.pages} صفحة · SHA-256 ${source.sha256.take(12)}…",
+                                "${source.pages} pages · SHA-256 ${source.sha256.take(12)}…",
+                            ),
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
                     }
                 }
             }
@@ -853,6 +1004,7 @@ private fun SourcesScreen(dataset: EncyclopediaDataset, onBack: () -> Unit) {
 
 @Composable
 private fun SafetyBanner(text: String, modifier: Modifier = Modifier) {
+    val language = LocalUiLanguage.current
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
@@ -863,7 +1015,7 @@ private fun SafetyBanner(text: String, modifier: Modifier = Modifier) {
             Icon(Icons.Default.Info, null, tint = DoseAmber)
             Spacer(Modifier.width(10.dp))
             Column {
-                Text("تنبيه سريري", fontWeight = FontWeight.Bold, color = DoseAmber)
+                Text(language.text("تنبيه سريري", "Clinical notice"), fontWeight = FontWeight.Bold, color = DoseAmber)
                 Spacer(Modifier.height(4.dp))
                 LtrText(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
             }
@@ -873,15 +1025,22 @@ private fun SafetyBanner(text: String, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SourceLine(title: String, page: Int) {
+    val language = LocalUiLanguage.current
     Surface(
         modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
         shape = RoundedCornerShape(14.dp),
     ) {
         Column(Modifier.padding(13.dp)) {
-            Text("المصدر", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text(language.text("المصدر", "Source"), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             LtrText(title, style = MaterialTheme.typography.bodySmall)
-            if (page > 0) LtrText("PDF page $page", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            if (page > 0) {
+                LtrText(
+                    language.text("صفحة PDF رقم $page", "PDF page $page"),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 12.sp,
+                )
+            }
         }
     }
 }
@@ -920,6 +1079,16 @@ private fun kindEnglish(kind: String): String = when (kind) {
     "culture" -> "CULTURE / DIAGNOSTICS"
     "quick" -> "WARD QUICK GUIDE"
     else -> "REFERENCE"
+}
+
+private fun kindTitleEnglish(kind: String): String = when (kind) {
+    "antibiotic" -> "Antibiotics"
+    "infection" -> "Infection site & therapy"
+    "bacteria" -> "Organism-directed therapy"
+    "distribution" -> "Distribution & penetration"
+    "culture" -> "Culture & diagnostics"
+    "quick" -> "Ward quick guide"
+    else -> "Clinical reference"
 }
 
 private fun kindArabic(kind: String): String = when (kind) {

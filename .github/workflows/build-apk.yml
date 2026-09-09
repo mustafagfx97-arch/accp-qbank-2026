@@ -38,17 +38,25 @@ jobs:
             --dataset /tmp/encyclopedia.json \
             --report data/checkpoints/content-report.json
 
-      - name: Create debug signing key
-        run: >-
-          keytool -genkeypair -v
-          -keystore debug.keystore
-          -storepass android
-          -alias androiddebugkey
-          -keypass android
-          -keyalg RSA
-          -keysize 2048
-          -validity 10000
-          -dname "CN=Android Debug,O=Clinical Antibiotic Encyclopedia,C=IQ"
+      - name: Restore stable debug signing key
+        uses: actions/cache@v4
+        with:
+          path: debug.keystore
+          key: antibiotic-encyclopedia-debug-keystore-v1
+
+      - name: Create debug signing key when absent
+        run: |
+          if [ ! -f debug.keystore ]; then
+            keytool -genkeypair -v \
+              -keystore debug.keystore \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Android Debug,O=Clinical Antibiotic Encyclopedia,C=IQ"
+          fi
 
       - name: Build debug APK
         run: gradle --no-daemon :app:assembleDebug
@@ -61,7 +69,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Clinical-Antibiotic-Encyclopedia-2026-v1.0
+          name: Clinical-Antibiotic-Encyclopedia-2026-v1.1-Bilingual
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
