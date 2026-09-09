@@ -165,6 +165,17 @@ class QBankRepository(private val context: Context) {
     }
 
     private fun readBundledQuestionJson(): String {
+        // AAPT recognizes a .gz asset, inflates it while packaging, and strips
+        // the .gz suffix. Read that packaged JSON first, while keeping a gzip
+        // fallback for environments that preserve the original asset name.
+        val packagedJson = runCatching {
+            context.assets.open(PACKAGED_ASSET_NAME)
+        }.getOrNull()
+
+        if (packagedJson != null) {
+            return packagedJson.bufferedReader(Charsets.UTF_8).use { it.readText() }
+        }
+
         return GZIPInputStream(context.assets.open(COMPRESSED_ASSET_NAME))
             .bufferedReader(Charsets.UTF_8)
             .use { it.readText() }
@@ -282,6 +293,7 @@ class QBankRepository(private val context: Context) {
         const val EXPECTED_CASE_COUNT = 275
         const val EXPECTED_JSON_SHA256 =
             "d285391e4ec2debe39a1ca6be969cf265c53d41c0cdf70003fb3631fa35cfb75"
+        const val PACKAGED_ASSET_NAME = "questions.json"
         const val COMPRESSED_ASSET_NAME = "questions.json.gz"
         const val SEED_PREFERENCES_NAME = "accp_qbank_seed"
         const val INSTALLED_HASH_KEY = "installed_json_sha256"
