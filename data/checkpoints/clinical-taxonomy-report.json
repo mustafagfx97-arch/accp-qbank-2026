@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "drugFamilyCount": 9,
+  "drugSubfamilyCount": 29,
+  "mappedDrugCount": 108,
+  "organismFamilyCount": 9,
+  "organismCardCount": 85,
+  "anaerobeOrganismCount": 8,
+  "anaerobeTherapyCount": 6,
+  "infectionSystemCount": 11,
+  "infectionSyndromeCount": 78,
+  "tissueSiteCount": 10,
+  "spectrumClassCount": 23,
+  "penetrationClassCount": 19,
+  "taxonomyBytes": 43116,
+  "taxonomySha256": "a0f0c70491d8c30d2d906ac1ce8b78160c60687ad4806aaaa792ca3e1dc5f401"
+}

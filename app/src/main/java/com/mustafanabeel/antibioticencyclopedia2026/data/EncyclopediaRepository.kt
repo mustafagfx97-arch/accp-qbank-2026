@@ -11,6 +11,7 @@ import java.util.Locale
 
 class EncyclopediaRepository(private val context: Context) {
     private var cached: EncyclopediaDataset? = null
+    private var cachedTaxonomy: ClinicalTaxonomy? = null
     private var entryIndex: Map<String, ReferenceEntry> = emptyMap()
 
     suspend fun load(): EncyclopediaDataset = withContext(Dispatchers.IO) {
@@ -20,15 +21,31 @@ class EncyclopediaRepository(private val context: Context) {
         check(digest == EXPECTED_DATASET_SHA256) {
             "Bundled encyclopedia failed its integrity check."
         }
+        val taxonomyBytes = context.assets.open(TAXONOMY_ASSET_NAME).use { it.readBytes() }
+        check(taxonomyBytes.sha256() == EXPECTED_TAXONOMY_SHA256) {
+            "Bundled clinical navigation failed its integrity check."
+        }
         val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
         val adapter = moshi.adapter(EncyclopediaDataset::class.java)
         val parsed = requireNotNull(adapter.fromJson(bytes.toString(Charsets.UTF_8))) {
             "Unable to parse the bundled encyclopedia."
         }
+        val taxonomyAdapter = moshi.adapter(ClinicalTaxonomy::class.java)
+        val taxonomy = requireNotNull(
+            taxonomyAdapter.fromJson(taxonomyBytes.toString(Charsets.UTF_8))
+        ) {
+            "Unable to parse the clinical navigation."
+        }
         validate(parsed)
+        validateTaxonomy(parsed, taxonomy)
         entryIndex = parsed.entries.associateBy(ReferenceEntry::id)
+        cachedTaxonomy = taxonomy
         cached = parsed
         parsed
+    }
+
+    fun taxonomy(): ClinicalTaxonomy = checkNotNull(cachedTaxonomy) {
+        "The clinical navigation has not been loaded."
     }
 
     fun entriesFor(drug: DrugRecord): List<ReferenceEntry> =
@@ -43,6 +60,7 @@ class EncyclopediaRepository(private val context: Context) {
         val expanded = expandQuery(rawQuery)
         val terms = expanded.map(::normalize).filter(String::isNotBlank).distinct()
         val query = normalize(rawQuery)
+        if (terms.isEmpty() && filter == ContentFilter.ALL) return emptyList()
         val results = ArrayList<SearchItem>()
 
         if (filter == ContentFilter.ALL || filter == ContentFilter.ANTIBIOTIC) {
@@ -68,6 +86,7 @@ class EncyclopediaRepository(private val context: Context) {
         if (filter != ContentFilter.ANTIBIOTIC) {
             dataset.entries.asSequence()
                 .filter { entry -> filter.accepts(entry) }
+                .filter { entry -> terms.isNotEmpty() || entry.isPrimaryBrowseRecord(filter) }
                 .forEach { entry ->
                     val title = normalize(entry.title)
                     val body = normalize(entry.subtitle + " " + entry.text)
@@ -94,6 +113,54 @@ class EncyclopediaRepository(private val context: Context) {
         check(dataset.entries.size == 1715) { "Search record count mismatch." }
         check(dataset.drugs.all { it.name.isNotBlank() && it.adultDose.isNotBlank() && it.renalRrt.isNotBlank() }) {
             "One or more drug cards are incomplete."
+        }
+    }
+
+    private fun validateTaxonomy(dataset: EncyclopediaDataset, taxonomy: ClinicalTaxonomy) {
+        check(taxonomy.schemaVersion == 1) { "Unsupported clinical navigation schema." }
+        check(taxonomy.drugFamilies.size == 9) { "Drug-family navigation is incomplete." }
+        check(taxonomy.organismFamilies.size == 9) { "Organism-family navigation is incomplete." }
+        check(taxonomy.infectionGroups.size == 11) { "Infection-system navigation is incomplete." }
+        check(taxonomy.tissueSites.size == 10) { "Tissue-site navigation is incomplete." }
+
+        val mappedDrugs = taxonomy.drugFamilies
+            .flatMap(DrugFamilyDefinition::subfamilies)
+            .flatMap(DrugSubfamilyDefinition::drugNames)
+        check(mappedDrugs.size == dataset.drugs.size && mappedDrugs.distinct().size == mappedDrugs.size) {
+            "A drug is missing from the family navigation or is listed twice."
+        }
+        check(mappedDrugs.toSet() == dataset.drugs.map(DrugRecord::name).toSet()) {
+            "Drug-family navigation does not match the bundled monographs."
+        }
+
+        val entryIds = dataset.entries.map(ReferenceEntry::id).toSet()
+        val referencedIds = buildList {
+            addAll(taxonomy.spectrumEntryIds)
+            addAll(taxonomy.penetrationEntryIds)
+            taxonomy.organismFamilies.forEach { group ->
+                add(group.overviewEntryId)
+                addAll(group.organismEntryIds)
+                addAll(group.therapyEntryIds)
+                addAll(group.deepDiveEntryIds)
+            }
+            taxonomy.infectionGroups.forEach { addAll(it.entryIds) }
+            taxonomy.tissueSites.forEach { site ->
+                addAll(site.summaryEntryIds)
+                addAll(site.supportEntryIds)
+            }
+        }
+        check(referencedIds.all(entryIds::contains)) {
+            "Clinical navigation points to a missing source record."
+        }
+        check(taxonomy.infectionGroups.sumOf { it.entryIds.size } == 78) {
+            "Infection-system navigation is incomplete."
+        }
+        val anaerobes = taxonomy.organismFamilies.firstOrNull { it.id == "anaerobes" }
+        check(anaerobes != null && anaerobes.organismEntryIds.size >= 8 && anaerobes.therapyEntryIds.size >= 6) {
+            "The dedicated anaerobe map is incomplete."
+        }
+        check(taxonomy.spectrumEntryIds.size >= 23 && taxonomy.penetrationEntryIds.size >= 17) {
+            "The clinical spectrum or penetration matrix is incomplete."
         }
     }
 
@@ -143,6 +210,21 @@ class EncyclopediaRepository(private val context: Context) {
         ContentFilter.QUICK -> entry.quick || entry.kind == "quick"
     }
 
+    private fun ReferenceEntry.isPrimaryBrowseRecord(filter: ContentFilter): Boolean = when (filter) {
+        ContentFilter.ALL -> false
+        ContentFilter.ANTIBIOTIC -> false
+        ContentFilter.INFECTION -> sourceId == "empiric_quick" && fields.isNotEmpty() &&
+            subtitle.matches(Regex("^(?:[5-9]|1[0-5])\\. .+"))
+        ContentFilter.BACTERIA -> sourceId == "spectrum_distribution" &&
+            kind == "bacteria" && fields.isNotEmpty() &&
+            title !in setOf("Organism/group", "1. Gram-Positive Cocci") &&
+            title.firstOrNull()?.isDigit() != true
+        ContentFilter.DISTRIBUTION -> sourceId == "spectrum_distribution" &&
+            kind == "distribution" && page in 22..23 && title != "Nitrofurantoin"
+        ContentFilter.CULTURE -> sourceId.startsWith("culture_") && fields.isNotEmpty()
+        ContentFilter.QUICK -> quick && fields.isNotEmpty()
+    }
+
     private fun normalize(value: String): String = Normalizer
         .normalize(value.lowercase(Locale.US), Normalizer.Form.NFD)
         .replace(Regex("\\p{Mn}+"), "")
@@ -168,8 +250,11 @@ class EncyclopediaRepository(private val context: Context) {
 
     companion object {
         const val ASSET_NAME = "encyclopedia.json"
+        const val TAXONOMY_ASSET_NAME = "clinical_taxonomy.json"
         const val EXPECTED_DATASET_SHA256 =
             "4317e8ec7ce842ed2d7d34dc3299ec2f9d019f062e2ae27870b7067194d611d4"
+        const val EXPECTED_TAXONOMY_SHA256 =
+            "a0f0c70491d8c30d2d906ac1ce8b78160c60687ad4806aaaa792ca3e1dc5f401"
 
         private val QUERY_EXPANSIONS = mapOf(
             "رئة" to "pneumonia",

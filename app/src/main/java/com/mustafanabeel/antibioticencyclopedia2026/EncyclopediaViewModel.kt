@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.mustafanabeel.antibioticencyclopedia2026.data.ContentFilter
+import com.mustafanabeel.antibioticencyclopedia2026.data.ClinicalTaxonomy
 import com.mustafanabeel.antibioticencyclopedia2026.data.DrugRecord
 import com.mustafanabeel.antibioticencyclopedia2026.data.EncyclopediaDataset
 import com.mustafanabeel.antibioticencyclopedia2026.data.EncyclopediaRepository
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 data class LoadState(
     val loading: Boolean = true,
     val dataset: EncyclopediaDataset? = null,
+    val taxonomy: ClinicalTaxonomy? = null,
     val error: String? = null,
 )
 
@@ -73,7 +75,13 @@ class EncyclopediaViewModel(application: Application) : AndroidViewModel(applica
         viewModelScope.launch {
             _loadState.value = LoadState(loading = true)
             runCatching { repository.load() }
-                .onSuccess { dataset -> _loadState.value = LoadState(loading = false, dataset = dataset) }
+                .onSuccess { dataset ->
+                    _loadState.value = LoadState(
+                        loading = false,
+                        dataset = dataset,
+                        taxonomy = repository.taxonomy(),
+                    )
+                }
                 .onFailure { error ->
                     _loadState.value = LoadState(
                         loading = false,

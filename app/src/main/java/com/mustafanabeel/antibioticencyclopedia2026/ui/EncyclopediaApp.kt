@@ -91,6 +91,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.mustafanabeel.antibioticencyclopedia2026.EncyclopediaViewModel
 import com.mustafanabeel.antibioticencyclopedia2026.UiLanguage
+import com.mustafanabeel.antibioticencyclopedia2026.data.ClinicalAxis
+import com.mustafanabeel.antibioticencyclopedia2026.data.ClinicalTaxonomy
 import com.mustafanabeel.antibioticencyclopedia2026.data.ContentFilter
 import com.mustafanabeel.antibioticencyclopedia2026.data.DrugRecord
 import com.mustafanabeel.antibioticencyclopedia2026.data.EncyclopediaDataset
@@ -120,10 +122,11 @@ private data class BottomDestination(
 )
 
 private data class CategorySpec(
-    val filter: ContentFilter,
+    val axis: ClinicalAxis,
     val title: String,
     val subtitle: String,
     val count: Int,
+    val countLabel: String,
     val icon: ImageVector,
     val tint: Color,
 )
@@ -141,7 +144,8 @@ fun EncyclopediaApp(viewModel: EncyclopediaViewModel) {
         when {
             state.loading -> LoadingScreen()
             state.error != null -> ErrorScreen(state.error.orEmpty(), viewModel::reload)
-            state.dataset != null -> EncyclopediaNavigation(state.dataset!!, viewModel)
+            state.dataset != null && state.taxonomy != null ->
+                EncyclopediaNavigation(state.dataset!!, state.taxonomy!!, viewModel)
         }
     }
 }
@@ -205,6 +209,7 @@ private fun LanguageToggle() {
 @Composable
 private fun EncyclopediaNavigation(
     dataset: EncyclopediaDataset,
+    taxonomy: ClinicalTaxonomy,
     viewModel: EncyclopediaViewModel,
 ) {
     val navController = rememberNavController()
@@ -224,14 +229,17 @@ private fun EncyclopediaNavigation(
             composable(HOME) {
                 HomeScreen(
                     dataset = dataset,
+                    taxonomy = taxonomy,
                     onSearch = { query ->
                         viewModel.beginSearch(query, ContentFilter.ALL)
                         navController.navigate(SEARCH)
                     },
-                    onCategory = { filter ->
+                    onSearchCategory = { filter ->
                         viewModel.beginSearch(filter = filter)
                         navController.navigate(SEARCH)
                     },
+                    onCatalog = { axis -> navController.navigate("catalog/${axis.key}") },
+                    onAnaerobes = { navController.navigate("organism-family/anaerobes") },
                     onAbout = { navController.navigate(ABOUT) },
                 )
             }
@@ -282,6 +290,92 @@ private fun EncyclopediaNavigation(
             composable(ABOUT) {
                 SourcesScreen(dataset = dataset, onBack = navController::popBackStack)
             }
+            composable(
+                route = "catalog/{axis}",
+                arguments = listOf(navArgument("axis") { type = NavType.StringType }),
+            ) { entry ->
+                ClinicalAxis.fromKey(entry.arguments?.getString("axis"))?.let { axis ->
+                    ClinicalCatalogScreen(
+                        axis = axis,
+                        taxonomy = taxonomy,
+                        dataset = dataset,
+                        language = LocalUiLanguage.current,
+                        onBack = navController::popBackStack,
+                        onToggleLanguage = viewModel::toggleLanguage,
+                        onOpenTopic = { id ->
+                            val prefix = when (axis) {
+                                ClinicalAxis.DRUG_FAMILIES -> "drug-family"
+                                ClinicalAxis.ORGANISM_FAMILIES -> "organism-family"
+                                ClinicalAxis.INFECTION_SYSTEMS -> "infection-group"
+                                ClinicalAxis.TISSUE_DISTRIBUTION -> "tissue-site"
+                            }
+                            navController.navigate("$prefix/$id")
+                        },
+                    )
+                }
+            }
+            composable(
+                route = "drug-family/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.StringType }),
+            ) { entry ->
+                taxonomy.drugFamilies.firstOrNull { it.id == entry.arguments?.getString("id") }?.let { family ->
+                    DrugFamilyScreen(
+                        family = family,
+                        dataset = dataset,
+                        language = LocalUiLanguage.current,
+                        onBack = navController::popBackStack,
+                        onToggleLanguage = viewModel::toggleLanguage,
+                        onOpenDrug = { navController.navigate("drug/$it") },
+                    )
+                }
+            }
+            composable(
+                route = "organism-family/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.StringType }),
+            ) { entry ->
+                taxonomy.organismFamilies.firstOrNull { it.id == entry.arguments?.getString("id") }?.let { family ->
+                    OrganismFamilyScreen(
+                        family = family,
+                        taxonomy = taxonomy,
+                        dataset = dataset,
+                        language = LocalUiLanguage.current,
+                        onBack = navController::popBackStack,
+                        onToggleLanguage = viewModel::toggleLanguage,
+                        onOpenEntry = { navController.navigate("entry/$it") },
+                    )
+                }
+            }
+            composable(
+                route = "infection-group/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.StringType }),
+            ) { entry ->
+                taxonomy.infectionGroups.firstOrNull { it.id == entry.arguments?.getString("id") }?.let { group ->
+                    InfectionGroupScreen(
+                        group = group,
+                        dataset = dataset,
+                        language = LocalUiLanguage.current,
+                        onBack = navController::popBackStack,
+                        onToggleLanguage = viewModel::toggleLanguage,
+                        onOpenEntry = { navController.navigate("entry/$it") },
+                    )
+                }
+            }
+            composable(
+                route = "tissue-site/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.StringType }),
+            ) { entry ->
+                taxonomy.tissueSites.firstOrNull { it.id == entry.arguments?.getString("id") }?.let { site ->
+                    TissueSiteScreen(
+                        site = site,
+                        taxonomy = taxonomy,
+                        dataset = dataset,
+                        language = LocalUiLanguage.current,
+                        onBack = navController::popBackStack,
+                        onToggleLanguage = viewModel::toggleLanguage,
+                        onOpenEntry = { navController.navigate("entry/$it") },
+                    )
+                }
+            }
         }
     }
 }
@@ -316,20 +410,53 @@ private fun RootNavigationBar(navController: NavHostController, currentRoute: St
 @Composable
 private fun HomeScreen(
     dataset: EncyclopediaDataset,
+    taxonomy: ClinicalTaxonomy,
     onSearch: (String) -> Unit,
-    onCategory: (ContentFilter) -> Unit,
+    onSearchCategory: (ContentFilter) -> Unit,
+    onCatalog: (ClinicalAxis) -> Unit,
+    onAnaerobes: () -> Unit,
     onAbout: () -> Unit,
 ) {
     val language = LocalUiLanguage.current
     var query by remember { mutableStateOf("") }
-    val categories = remember(dataset, language) {
+    val categories = remember(dataset, taxonomy, language) {
         listOf(
-            CategorySpec(ContentFilter.ANTIBIOTIC, language.text("المضادات الحيوية", "Antibiotics"), "Drug monographs", dataset.drugs.size, Icons.Default.Medication, ClinicalTeal),
-            CategorySpec(ContentFilter.INFECTION, language.text("مكان العدوى", "Infection site"), "Empiric therapy", dataset.entries.count { it.kind == "infection" }, Icons.Default.LocalHospital, DoseAmber),
-            CategorySpec(ContentFilter.BACTERIA, language.text("نوع البكتيريا", "Bacteria"), "Organism-directed", dataset.entries.count { it.kind == "bacteria" }, Icons.Default.Biotech, CultureViolet),
-            CategorySpec(ContentFilter.DISTRIBUTION, language.text("الانتشار داخل الجسم", "Body distribution"), "Tissue penetration", dataset.entries.count { it.kind == "distribution" }, Icons.Default.Public, RenalBlue),
-            CategorySpec(ContentFilter.CULTURE, language.text("الزرع والتشخيص", "Culture & diagnostics"), "Culture · AST · MIC", dataset.entries.count { it.kind == "culture" }, Icons.Default.Science, HepaticRose),
-            CategorySpec(ContentFilter.QUICK, language.text("دليل الجناح السريع", "Ward quick guide"), "Ward pocket guides", dataset.entries.count { it.quick || it.kind == "quick" }, Icons.Default.Speed, DoseAmber),
+            CategorySpec(
+                ClinicalAxis.DRUG_FAMILIES,
+                language.text("عوائل المضادات", "Antibiotic families"),
+                language.text("عائلة ← مجموعة فرعية ← دواء", "Family → subfamily → drug"),
+                taxonomy.drugFamilies.size,
+                language.text("عوائل رئيسية", "major families"),
+                Icons.Default.Medication,
+                ClinicalTeal,
+            ),
+            CategorySpec(
+                ClinicalAxis.ORGANISM_FAMILIES,
+                language.text("عوائل الجراثيم", "Organism families"),
+                language.text("النوع، المقاومة، وما يغطيه", "Species, resistance, coverage"),
+                taxonomy.organismFamilies.size,
+                language.text("مجموعات", "groups"),
+                Icons.Default.Biotech,
+                CultureViolet,
+            ),
+            CategorySpec(
+                ClinicalAxis.INFECTION_SYSTEMS,
+                language.text("العدوى حسب الجهاز", "Infections by system"),
+                language.text("ممرضات ← تجريبي ← تعديل", "Pathogens → empiric → modifier"),
+                taxonomy.infectionGroups.size,
+                language.text("أجهزة", "systems"),
+                Icons.Default.LocalHospital,
+                DoseAmber,
+            ),
+            CategorySpec(
+                ClinicalAxis.TISSUE_DISTRIBUTION,
+                language.text("التوزيع داخل الجسم", "Tissue distribution"),
+                language.text("أفضل وصول وحدود كل موقع", "Best exposure and site limits"),
+                taxonomy.tissueSites.size,
+                language.text("مواقع", "sites"),
+                Icons.Default.Public,
+                RenalBlue,
+            ),
         )
     }
     LazyColumn(
@@ -411,13 +538,13 @@ private fun HomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 StatPill("${dataset.drugs.size}", language.text("دواء", "Drugs"), Modifier.weight(1f))
-                StatPill("${dataset.entries.size}", language.text("سجل", "Entries"), Modifier.weight(1f))
-                StatPill("${dataset.sources.sumOf { it.pages }}", language.text("صفحة مصدر", "Source pages"), Modifier.weight(1f))
+                StatPill("${taxonomy.organismFamilies.size}", language.text("عوائل جرثومية", "Organism groups"), Modifier.weight(1f))
+                StatPill("${taxonomy.infectionGroups.sumOf { it.entryIds.size }}", language.text("متلازمة", "Syndromes"), Modifier.weight(1f))
             }
         }
         item {
             Text(
-                language.text("استكشف الموسوعة", "Explore the encyclopedia"),
+                language.text("أربعة مسارات سريرية واضحة", "Four clear clinical paths"),
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
@@ -426,15 +553,51 @@ private fun HomeScreen(
         item {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxWidth().height(610.dp).padding(horizontal = 14.dp),
+                modifier = Modifier.fillMaxWidth().height(402.dp).padding(horizontal = 14.dp),
                 userScrollEnabled = false,
                 contentPadding = PaddingValues(6.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 items(categories) { category ->
-                    CategoryCard(category = category, onClick = { onCategory(category.filter) })
+                    CategoryCard(category = category, onClick = { onCatalog(category.axis) })
                 }
+            }
+        }
+        item {
+            AnaerobeShortcut(
+                language = language,
+                organismCount = taxonomy.organismFamilies
+                    .firstOrNull { it.id == "anaerobes" }
+                    ?.organismEntryIds
+                    ?.size
+                    ?: 0,
+                onClick = onAnaerobes,
+            )
+        }
+        item {
+            Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
+                Text(
+                    language.text("أدوات المرجع", "Reference tools"),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(Modifier.height(9.dp))
+                ReferenceToolRow(
+                    title = language.text("الزرع والتشخيص", "Culture & diagnostics"),
+                    subtitle = "Culture · AST · MIC",
+                    icon = Icons.Default.Science,
+                    tint = HepaticRose,
+                    onClick = { onSearchCategory(ContentFilter.CULTURE) },
+                )
+                Spacer(Modifier.height(8.dp))
+                ReferenceToolRow(
+                    title = language.text("دليل الجناح السريع", "Ward quick guide"),
+                    subtitle = language.text("مراجعة سريعة مرتبطة بالمصادر", "Source-backed rapid review"),
+                    icon = Icons.Default.Speed,
+                    tint = DoseAmber,
+                    onClick = { onSearchCategory(ContentFilter.QUICK) },
+                )
             }
         }
         item {
@@ -472,11 +635,75 @@ private fun CategoryCard(category: CategorySpec, onClick: () -> Unit) {
                 LtrText(category.subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp, maxLines = 1)
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    language.text("${category.count} سجل", "${category.count} entries"),
+                    "${category.count} ${category.countLabel}",
                     color = category.tint,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 12.sp,
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AnaerobeShortcut(
+    language: UiLanguage,
+    organismCount: Int,
+    onClick: () -> Unit,
+) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = CultureViolet.copy(alpha = 0.12f)),
+        border = BorderStroke(1.dp, CultureViolet.copy(alpha = 0.42f)),
+        shape = RoundedCornerShape(20.dp),
+    ) {
+        Row(Modifier.padding(17.dp), verticalAlignment = Alignment.CenterVertically) {
+            Surface(shape = CircleShape, color = CultureViolet.copy(alpha = 0.17f)) {
+                Icon(Icons.Default.Biotech, null, tint = CultureViolet, modifier = Modifier.padding(10.dp).size(25.dp))
+            }
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    language.text("اللاهوائيات: ماذا نستخدم؟", "Anaerobes: what do we use?"),
+                    fontWeight = FontWeight.ExtraBold,
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    language.text(
+                        "$organismCount مجموعات + خيارات التغطية + أهم الفجوات",
+                        "$organismCount groups + coverage options + critical gaps",
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 12.sp,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReferenceToolRow(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    tint: Color,
+    onClick: () -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, tint.copy(alpha = 0.28f)),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+            Surface(shape = CircleShape, color = tint.copy(alpha = 0.13f)) {
+                Icon(icon, null, tint = tint, modifier = Modifier.padding(8.dp).size(20.dp))
+            }
+            Spacer(Modifier.width(10.dp))
+            Column {
+                Text(title, fontWeight = FontWeight.Bold)
+                LtrText(subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
             }
         }
     }
@@ -554,13 +781,23 @@ private fun SearchScreen(
             LtrText(filter.englishLabel, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
         }
         if (results.isEmpty()) {
-            EmptyState(
-                language.text("لا توجد نتيجة مطابقة", "No matching results"),
-                language.text(
-                    "جرّب الاسم العلمي، الاختصار أو غيّر نوع البحث.",
-                    "Try a generic name, abbreviation, or a different search category.",
-                ),
-            )
+            if (query.isBlank() && filter == ContentFilter.ALL) {
+                EmptyState(
+                    language.text("ابدأ بكلمة بحث واضحة", "Start with a focused search"),
+                    language.text(
+                        "مثال: meropenem أو MRSA أو anaerobes أو meningitis أو prostate.",
+                        "For example: meropenem, MRSA, anaerobes, meningitis, or prostate.",
+                    ),
+                )
+            } else {
+                EmptyState(
+                    language.text("لا توجد نتيجة مطابقة", "No matching results"),
+                    language.text(
+                        "جرّب الاسم العلمي، الاختصار أو غيّر نوع البحث.",
+                        "Try a generic name, abbreviation, or a different search category.",
+                    ),
+                )
+            }
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),

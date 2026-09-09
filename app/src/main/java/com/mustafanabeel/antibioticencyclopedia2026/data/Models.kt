@@ -12,6 +12,79 @@ data class EncyclopediaDataset(
     val entries: List<ReferenceEntry> = emptyList(),
 )
 
+data class ClinicalTaxonomy(
+    val schemaVersion: Int = 0,
+    val title: String = "",
+    val drugFamilies: List<DrugFamilyDefinition> = emptyList(),
+    val organismFamilies: List<OrganismFamilyDefinition> = emptyList(),
+    val infectionGroups: List<InfectionGroupDefinition> = emptyList(),
+    val tissueSites: List<TissueSiteDefinition> = emptyList(),
+    val spectrumEntryIds: List<String> = emptyList(),
+    val penetrationEntryIds: List<String> = emptyList(),
+)
+
+data class DrugFamilyDefinition(
+    val id: String = "",
+    val titleAr: String = "",
+    val titleEn: String = "",
+    val descriptionAr: String = "",
+    val descriptionEn: String = "",
+    val subfamilies: List<DrugSubfamilyDefinition> = emptyList(),
+)
+
+data class DrugSubfamilyDefinition(
+    val id: String = "",
+    val titleAr: String = "",
+    val titleEn: String = "",
+    val descriptionAr: String = "",
+    val descriptionEn: String = "",
+    val drugNames: List<String> = emptyList(),
+)
+
+data class OrganismFamilyDefinition(
+    val id: String = "",
+    val titleAr: String = "",
+    val titleEn: String = "",
+    val descriptionAr: String = "",
+    val descriptionEn: String = "",
+    val overviewEntryId: String = "",
+    val organismEntryIds: List<String> = emptyList(),
+    val coverageField: String = "",
+    val therapyEntryIds: List<String> = emptyList(),
+    val deepDiveEntryIds: List<String> = emptyList(),
+)
+
+data class InfectionGroupDefinition(
+    val id: String = "",
+    val titleAr: String = "",
+    val titleEn: String = "",
+    val descriptionAr: String = "",
+    val descriptionEn: String = "",
+    val entryIds: List<String> = emptyList(),
+)
+
+data class TissueSiteDefinition(
+    val id: String = "",
+    val titleAr: String = "",
+    val titleEn: String = "",
+    val descriptionAr: String = "",
+    val descriptionEn: String = "",
+    val matrixField: String = "",
+    val summaryEntryIds: List<String> = emptyList(),
+    val supportEntryIds: List<String> = emptyList(),
+)
+
+enum class ClinicalAxis(val key: String) {
+    DRUG_FAMILIES("drug-families"),
+    ORGANISM_FAMILIES("organism-families"),
+    INFECTION_SYSTEMS("infection-systems"),
+    TISSUE_DISTRIBUTION("tissue-distribution");
+
+    companion object {
+        fun fromKey(key: String?): ClinicalAxis? = entries.firstOrNull { it.key == key }
+    }
+}
+
 data class SourceInfo(
     val id: String = "",
     val filename: String = "",

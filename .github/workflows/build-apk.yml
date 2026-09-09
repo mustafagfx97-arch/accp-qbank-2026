@@ -37,6 +37,12 @@ jobs:
           python3 tools/validate_content.py \
             --dataset /tmp/encyclopedia.json \
             --report data/checkpoints/content-report.json
+          python3 tools/build_taxonomy.py \
+            --dataset /tmp/encyclopedia.json \
+            --output /tmp/clinical_taxonomy.json \
+            --report /tmp/clinical-taxonomy-report.json
+          cmp app/src/main/assets/clinical_taxonomy.json /tmp/clinical_taxonomy.json
+          cmp data/checkpoints/clinical-taxonomy-report.json /tmp/clinical-taxonomy-report.json
 
       - name: Restore stable debug signing key
         uses: actions/cache@v4
@@ -65,11 +71,13 @@ jobs:
         run: |
           unzip -p app/build/outputs/apk/debug/app-debug.apk assets/encyclopedia.json > /tmp/packaged-encyclopedia.json
           echo "4317e8ec7ce842ed2d7d34dc3299ec2f9d019f062e2ae27870b7067194d611d4  /tmp/packaged-encyclopedia.json" | sha256sum --check
+          unzip -p app/build/outputs/apk/debug/app-debug.apk assets/clinical_taxonomy.json > /tmp/packaged-clinical-taxonomy.json
+          echo "a0f0c70491d8c30d2d906ac1ce8b78160c60687ad4806aaaa792ca3e1dc5f401  /tmp/packaged-clinical-taxonomy.json" | sha256sum --check
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Clinical-Antibiotic-Encyclopedia-2026-v1.1-Bilingual
+          name: Clinical-Antibiotic-Encyclopedia-2026-v1.2-Professional
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30

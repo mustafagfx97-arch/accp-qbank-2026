@@ -1,0 +1,1124 @@
+{
+  "schemaVersion": 1,
+  "title": "Clinical Antibiotic Navigation Taxonomy 2026",
+  "drugFamilies": [
+    {
+      "id": "beta_lactams",
+      "titleAr": "عائلة البيتا-لاكتام",
+      "titleEn": "Beta-lactams",
+      "descriptionAr": "مرتبة حسب البنية والدور السريري: بنسلينات، سيفالوسبورينات، كاربابينيمات، مونوباكتام وعوامل حديثة للمقاومة.",
+      "descriptionEn": "Organized by structure and clinical role: penicillins, cephalosporins, carbapenems, monobactams and modern resistance agents.",
+      "subfamilies": [
+        {
+          "id": "penicillins",
+          "titleAr": "البنسلينات",
+          "titleEn": "Penicillins",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Penicillin G aqueous",
+            "Penicillin V",
+            "Benzathine penicillin G",
+            "Nafcillin / Oxacillin",
+            "Dicloxacillin / Flucloxacillin",
+            "Ampicillin",
+            "Amoxicillin",
+            "Ampicillin-sulbactam",
+            "Amoxicillin-clavulanate",
+            "Piperacillin-tazobactam",
+            "Pivmecillinam"
+          ]
+        },
+        {
+          "id": "cephalosporins",
+          "titleAr": "السيفالوسبورينات والسيفامايسينات",
+          "titleEn": "Cephalosporins & cephamycins",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Cefazolin",
+            "Cephalexin",
+            "Cefadroxil",
+            "Cefuroxime",
+            "Cefoxitin",
+            "Cefotetan",
+            "Ceftriaxone",
+            "Cefotaxime",
+            "Ceftazidime",
+            "Cefixime / Cefpodoxime",
+            "Cefepime",
+            "Ceftaroline",
+            "Ceftobiprole"
+          ]
+        },
+        {
+          "id": "carbapenems",
+          "titleAr": "الكاربابينيمات ومثبطاتها",
+          "titleEn": "Carbapenems & protected carbapenems",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Meropenem",
+            "Imipenem-cilastatin",
+            "Ertapenem",
+            "Doripenem",
+            "Meropenem-vaborbactam",
+            "Imipenem-cilastatin-relebactam"
+          ]
+        },
+        {
+          "id": "monobactams_penems",
+          "titleAr": "المونوباكتام والبنيمات الفموية",
+          "titleEn": "Monobactams & oral penems",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Aztreonam",
+            "Aztreonam-avibactam",
+            "Sulopenem etzadroxil-probenecid",
+            "Tebipenem pivoxil"
+          ]
+        },
+        {
+          "id": "modern_mdr_beta_lactams",
+          "titleAr": "عوامل بيتا-لاكتام الحديثة للمقاومة",
+          "titleEn": "Modern MDR beta-lactam strategies",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Ceftolozane-tazobactam",
+            "Cefiderocol",
+            "Cefepime-enmetazobactam",
+            "Cefepime-zidebactam",
+            "Ceftazidime-avibactam",
+            "Sulbactam-durlobactam"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gram_positive_agents",
+      "titleAr": "عوامل موجّهة لموجبات الغرام",
+      "titleEn": "Gram-positive focused agents",
+      "descriptionAr": "الغليكوببتيدات والليبوغليكوببتيدات، الدابتومايسين، الأوكسازوليدينونات وعوامل الإنقاذ المختارة.",
+      "descriptionEn": "Glycopeptides and lipoglycopeptides, daptomycin, oxazolidinones and selected salvage agents.",
+      "subfamilies": [
+        {
+          "id": "glycopeptides",
+          "titleAr": "الغليكوببتيدات والليبوغليكوببتيدات",
+          "titleEn": "Glycopeptides & lipoglycopeptides",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Vancomycin IV",
+            "Vancomycin PO/rectal",
+            "Teicoplanin",
+            "Telavancin",
+            "Dalbavancin",
+            "Oritavancin"
+          ]
+        },
+        {
+          "id": "lipopeptides",
+          "titleAr": "الليبوببتيدات",
+          "titleEn": "Lipopeptides",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Daptomycin"
+          ]
+        },
+        {
+          "id": "oxazolidinones",
+          "titleAr": "الأوكسازوليدينونات",
+          "titleEn": "Oxazolidinones",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Linezolid",
+            "Tedizolid"
+          ]
+        },
+        {
+          "id": "other_gram_positive",
+          "titleAr": "عوامل أخرى لموجبات الغرام",
+          "titleEn": "Other Gram-positive agents",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Quinupristin-dalfopristin",
+            "Fusidic acid"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "aminoglycosides",
+      "titleAr": "الأمينوغليكوزيدات",
+      "titleEn": "Aminoglycosides",
+      "descriptionAr": "عوامل قاتلة تعتمد على التركيز ضد الجراثيم الهوائية مع ضرورة ضبط الجرعة والمراقبة.",
+      "descriptionEn": "Concentration-dependent agents for aerobic pathogens with dose optimization and monitoring.",
+      "subfamilies": [
+        {
+          "id": "systemic_aminoglycosides",
+          "titleAr": "العوامل الجهازية",
+          "titleEn": "Systemic agents",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Gentamicin",
+            "Tobramycin",
+            "Amikacin",
+            "Plazomicin",
+            "Streptomycin"
+          ]
+        },
+        {
+          "id": "luminal_aminoglycosides",
+          "titleAr": "العوامل اللمعية",
+          "titleEn": "Luminal agents",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Paromomycin"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "macrolides_lincosamides_pleuromutilins",
+      "titleAr": "الماكروليدات واللينكوساميدات والبلوروموتيلينات",
+      "titleEn": "Macrolides, lincosamides & pleuromutilins",
+      "descriptionAr": "مرتبة إلى ماكروليدات، كليندامايسين، بلوروموتيلينات وعلاج لمعي للمطثية العسيرة.",
+      "descriptionEn": "Separated into macrolides, clindamycin, pleuromutilins and luminal C. difficile therapy.",
+      "subfamilies": [
+        {
+          "id": "macrolides",
+          "titleAr": "الماكروليدات",
+          "titleEn": "Macrolides",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Azithromycin",
+            "Clarithromycin",
+            "Erythromycin"
+          ]
+        },
+        {
+          "id": "lincosamides",
+          "titleAr": "اللينكوساميدات",
+          "titleEn": "Lincosamides",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Clindamycin"
+          ]
+        },
+        {
+          "id": "pleuromutilins",
+          "titleAr": "البلوروموتيلينات",
+          "titleEn": "Pleuromutilins",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Lefamulin",
+            "Retapamulin topical"
+          ]
+        },
+        {
+          "id": "luminal_cdi",
+          "titleAr": "علاج لمعي للمطثية العسيرة",
+          "titleEn": "Luminal C. difficile agent",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Fidaxomicin"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tetracyclines",
+      "titleAr": "التتراسيكلينات ومشتقاتها",
+      "titleEn": "Tetracyclines & derivatives",
+      "descriptionAr": "التتراسيكلينات التقليدية والمشتقات الأحدث ذات الأدوار النسيجية والمقاومة المختلفة.",
+      "descriptionEn": "Traditional tetracyclines and newer derivatives with distinct tissue and resistance roles.",
+      "subfamilies": [
+        {
+          "id": "classic_tetracyclines",
+          "titleAr": "التتراسيكلينات التقليدية",
+          "titleEn": "Traditional tetracyclines",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Doxycycline",
+            "Minocycline",
+            "Tetracycline"
+          ]
+        },
+        {
+          "id": "new_tetracyclines",
+          "titleAr": "مشتقات التتراسيكلين الحديثة",
+          "titleEn": "Newer tetracycline derivatives",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Tigecycline",
+            "Eravacycline",
+            "Omadacycline",
+            "Sarecycline"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "topoisomerase_agents",
+      "titleAr": "الفلوروكينولونات ومثبطات التوبويزوميراز",
+      "titleEn": "Fluoroquinolones & topoisomerase inhibitors",
+      "descriptionAr": "تمييز عوامل التنفس، الزائفة، البول والبروستات عن العوامل الحديثة محددة الاستطباب.",
+      "descriptionEn": "Separates respiratory, antipseudomonal, urinary/prostate and newer indication-specific agents.",
+      "subfamilies": [
+        {
+          "id": "fluoroquinolones",
+          "titleAr": "الفلوروكينولونات",
+          "titleEn": "Fluoroquinolones",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Ciprofloxacin",
+            "Levofloxacin",
+            "Moxifloxacin",
+            "Delafloxacin",
+            "Ofloxacin"
+          ]
+        },
+        {
+          "id": "novel_topoisomerase",
+          "titleAr": "مثبطات توبويزوميراز حديثة",
+          "titleEn": "Novel topoisomerase inhibitors",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Gepotidacin",
+            "Zoliflodacin"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "folate_anaerobe_urinary",
+      "titleAr": "عوامل الفولات واللاهوائيات والمسالك البولية",
+      "titleEn": "Folate, anaerobic & urinary agents",
+      "descriptionAr": "فصل واضح بين TMP-SMX والنيتروإيميدازولات والعوامل الخاصة بالمثانة أو البول.",
+      "descriptionEn": "A clear split between TMP-SMX, nitroimidazoles and bladder/urinary-specific agents.",
+      "subfamilies": [
+        {
+          "id": "folate_antagonists",
+          "titleAr": "مضادات الفولات",
+          "titleEn": "Folate antagonists",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "TMP-SMX"
+          ]
+        },
+        {
+          "id": "nitroimidazoles",
+          "titleAr": "النيتروإيميدازولات - لاهوائيات",
+          "titleEn": "Nitroimidazoles - anaerobes",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Metronidazole",
+            "Tinidazole",
+            "Secnidazole"
+          ]
+        },
+        {
+          "id": "urinary_agents",
+          "titleAr": "عوامل بولية ولمعية",
+          "titleEn": "Urinary & luminal agents",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Nitrofurantoin monohydrate/macrocrystals",
+            "Fosfomycin tromethamine oral",
+            "Fosfomycin IV",
+            "Methenamine hippurate"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rifamycins_membrane_misc",
+      "titleAr": "الريفامايسينات وعوامل الغشاء والعوامل الموضعية",
+      "titleEn": "Rifamycins, membrane & topical agents",
+      "descriptionAr": "ريفامايسينات، بوليميكسينات، كلورامفينيكول، عوامل موضعية وعوامل خاصة.",
+      "descriptionEn": "Rifamycins, polymyxins, chloramphenicol, topical agents and selected special agents.",
+      "subfamilies": [
+        {
+          "id": "rifamycins",
+          "titleAr": "الريفامايسينات",
+          "titleEn": "Rifamycins",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Rifampin",
+            "Rifabutin",
+            "Rifapentine",
+            "Rifaximin"
+          ]
+        },
+        {
+          "id": "polymyxins",
+          "titleAr": "البوليميكسينات",
+          "titleEn": "Polymyxins",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Colistimethate sodium (colistin)",
+            "Polymyxin B"
+          ]
+        },
+        {
+          "id": "phenicols",
+          "titleAr": "الفينيكولات",
+          "titleEn": "Phenicols",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Chloramphenicol"
+          ]
+        },
+        {
+          "id": "topical_other",
+          "titleAr": "عوامل موضعية وخاصة",
+          "titleEn": "Topical & special agents",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Mupirocin topical/nasal",
+            "Bacitracin topical",
+            "Spectinomycin"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tuberculosis_agents",
+      "titleAr": "أدوية السل",
+      "titleEn": "Tuberculosis agents",
+      "descriptionAr": "عوامل الخط الأول والعوامل الحديثة والإضافية للسل المقاوم، وتُقرأ ضمن نظم متعددة الأدوية.",
+      "descriptionEn": "First-line, newer and companion drug-resistant TB agents, interpreted within multidrug regimens.",
+      "subfamilies": [
+        {
+          "id": "first_line_tb",
+          "titleAr": "عوامل أساسية",
+          "titleEn": "Core agents",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Isoniazid",
+            "Pyrazinamide",
+            "Ethambutol"
+          ]
+        },
+        {
+          "id": "new_dr_tb",
+          "titleAr": "عوامل حديثة للسل المقاوم",
+          "titleEn": "Newer drug-resistant TB agents",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Bedaquiline",
+            "Pretomanid",
+            "Linezolid for TB",
+            "Moxifloxacin for TB",
+            "Delamanid"
+          ]
+        },
+        {
+          "id": "companion_tb",
+          "titleAr": "عوامل مرافقة واحتياطية",
+          "titleEn": "Companion & reserve agents",
+          "descriptionAr": "",
+          "descriptionEn": "",
+          "drugNames": [
+            "Clofazimine for TB",
+            "Cycloserine / Terizidone",
+            "Ethionamide / Prothionamide",
+            "PAS"
+          ]
+        }
+      ]
+    }
+  ],
+  "organismFamilies": [
+    {
+      "id": "gram_positive_cocci",
+      "titleAr": "المكورات موجبة الغرام",
+      "titleEn": "Gram-positive cocci",
+      "descriptionAr": "المكورات العنقودية والعقدية والمكورات المعوية مع الفصل بين أنماط المقاومة المهمة.",
+      "descriptionEn": "Staphylococci, streptococci and enterococci separated by clinically decisive resistance phenotypes.",
+      "overviewEntryId": "spectrum_distribution-p4-t1-r1",
+      "organismEntryIds": [
+        "spectrum_distribution-p4-t2-r1",
+        "spectrum_distribution-p4-t2-r2",
+        "spectrum_distribution-p4-t2-r3",
+        "spectrum_distribution-p4-t2-r4",
+        "spectrum_distribution-p4-t2-r5",
+        "spectrum_distribution-p4-t2-r6",
+        "spectrum_distribution-p4-t2-r7",
+        "spectrum_distribution-p4-t2-r8",
+        "spectrum_distribution-p5-t1-r1",
+        "spectrum_distribution-p5-t1-r2",
+        "spectrum_distribution-p5-t1-r3",
+        "spectrum_distribution-p5-t1-r4",
+        "spectrum_distribution-p5-t1-r5",
+        "spectrum_distribution-p5-t1-r6",
+        "spectrum_distribution-p5-t1-r7",
+        "spectrum_distribution-p5-t1-r8"
+      ],
+      "coverageField": "Gram-positive",
+      "therapyEntryIds": [],
+      "deepDiveEntryIds": [
+        "bacteria_atlas-p5",
+        "bacteria_atlas-p6",
+        "bacteria_atlas-p7",
+        "bacteria_atlas-p8",
+        "bacteria_atlas-p9",
+        "bacteria_atlas-p10",
+        "bacteria_atlas-p11",
+        "bacteria_atlas-p12",
+        "bacteria_atlas-p13",
+        "bacteria_atlas-p14",
+        "bacteria_atlas-p15",
+        "bacteria_atlas-p16",
+        "bacteria_atlas-p17",
+        "bacteria_atlas-p18",
+        "bacteria_atlas-p19"
+      ]
+    },
+    {
+      "id": "gram_positive_bacilli",
+      "titleAr": "العصيات موجبة الغرام والمتفرعة",
+      "titleEn": "Gram-positive bacilli & branching organisms",
+      "descriptionAr": "ليستيريا، كورينيباكتيريوم، باسيلس، المطثيات، أكتينومايسس ونوكارديا مع الفجوات العلاجية المهمة.",
+      "descriptionEn": "Listeria, Corynebacterium, Bacillus, clostridia, Actinomyces and Nocardia with their key treatment gaps.",
+      "overviewEntryId": "spectrum_distribution-p4-t1-r2",
+      "organismEntryIds": [
+        "spectrum_distribution-p5-t2-r1",
+        "spectrum_distribution-p5-t2-r2",
+        "spectrum_distribution-p5-t2-r3",
+        "spectrum_distribution-p5-t2-r4",
+        "spectrum_distribution-p5-t2-r5",
+        "spectrum_distribution-p5-t2-r6",
+        "spectrum_distribution-p5-t2-r7",
+        "spectrum_distribution-p5-t2-r8",
+        "spectrum_distribution-p5-t2-r9",
+        "spectrum_distribution-p5-t2-r10",
+        "spectrum_distribution-p5-t2-r11",
+        "spectrum_distribution-p5-t2-r12",
+        "spectrum_distribution-p5-t2-r13"
+      ],
+      "coverageField": "Gram-positive",
+      "therapyEntryIds": [
+        "drug_handbook-p32-t1-r10",
+        "drug_handbook-p32-t1-r14",
+        "drug_handbook-p32-t1-r16"
+      ],
+      "deepDiveEntryIds": [
+        "bacteria_atlas-p20",
+        "bacteria_atlas-p21",
+        "bacteria_atlas-p22",
+        "bacteria_atlas-p23",
+        "bacteria_atlas-p24",
+        "bacteria_atlas-p25",
+        "bacteria_atlas-p61",
+        "bacteria_atlas-p62"
+      ]
+    },
+    {
+      "id": "gram_negative_cocci",
+      "titleAr": "المكورات والعصيات القصيرة سالبة الغرام",
+      "titleEn": "Gram-negative cocci & coccobacilli",
+      "descriptionAr": "النيسيريا، المستدمية، الموراكسيلة، جراثيم العضات ومجموعة HACEK.",
+      "descriptionEn": "Neisseria, Haemophilus, Moraxella, bite-associated organisms and HACEK.",
+      "overviewEntryId": "spectrum_distribution-p4-t1-r3",
+      "organismEntryIds": [
+        "spectrum_distribution-p6-t1-r1",
+        "spectrum_distribution-p6-t1-r2",
+        "spectrum_distribution-p6-t1-r3",
+        "spectrum_distribution-p6-t1-r4",
+        "spectrum_distribution-p6-t1-r5",
+        "spectrum_distribution-p6-t1-r6",
+        "spectrum_distribution-p6-t1-r7",
+        "spectrum_distribution-p6-t1-r8",
+        "spectrum_distribution-p6-t1-r9",
+        "spectrum_distribution-p6-t1-r10",
+        "spectrum_distribution-p6-t1-r11",
+        "spectrum_distribution-p6-t1-r12"
+      ],
+      "coverageField": "Gram-negative",
+      "therapyEntryIds": [],
+      "deepDiveEntryIds": [
+        "bacteria_atlas-p41",
+        "bacteria_atlas-p42",
+        "bacteria_atlas-p43",
+        "bacteria_atlas-p44",
+        "bacteria_atlas-p45",
+        "bacteria_atlas-p46",
+        "bacteria_atlas-p47",
+        "bacteria_atlas-p48"
+      ]
+    },
+    {
+      "id": "enterobacterales",
+      "titleAr": "المعويات",
+      "titleEn": "Enterobacterales",
+      "descriptionAr": "ترتيب بحسب النوع ثم النمط: حسّاس، ESBL، AmpC، CRE وآلية الكاربابينيماز.",
+      "descriptionEn": "Organized by species and phenotype: susceptible, ESBL, AmpC, CRE and carbapenemase mechanism.",
+      "overviewEntryId": "spectrum_distribution-p4-t1-r4",
+      "organismEntryIds": [
+        "spectrum_distribution-p7-t1-r1",
+        "spectrum_distribution-p7-t1-r2",
+        "spectrum_distribution-p7-t1-r3",
+        "spectrum_distribution-p7-t1-r4",
+        "spectrum_distribution-p7-t1-r5",
+        "spectrum_distribution-p7-t1-r6",
+        "spectrum_distribution-p7-t1-r7",
+        "spectrum_distribution-p7-t1-r8",
+        "spectrum_distribution-p7-t1-r9",
+        "spectrum_distribution-p7-t1-r10",
+        "spectrum_distribution-p7-t1-r11",
+        "spectrum_distribution-p7-t1-r12",
+        "spectrum_distribution-p7-t1-r13",
+        "spectrum_distribution-p7-t1-r14",
+        "spectrum_distribution-p7-t1-r15",
+        "spectrum_distribution-p7-t1-r16"
+      ],
+      "coverageField": "Gram-negative",
+      "therapyEntryIds": [],
+      "deepDiveEntryIds": [
+        "bacteria_atlas-p26",
+        "bacteria_atlas-p27",
+        "bacteria_atlas-p28",
+        "bacteria_atlas-p29",
+        "bacteria_atlas-p30",
+        "bacteria_atlas-p31",
+        "bacteria_atlas-p32",
+        "bacteria_atlas-p33",
+        "bacteria_atlas-p34",
+        "bacteria_atlas-p53",
+        "bacteria_atlas-p54",
+        "bacteria_atlas-p55",
+        "bacteria_atlas-p56"
+      ]
+    },
+    {
+      "id": "non_fermenters",
+      "titleAr": "الجراثيم غير المخمّرة وعالية الخطورة",
+      "titleEn": "Non-fermenters & high-consequence Gram-negatives",
+      "descriptionAr": "الزائفة، الأسينيتوباكتر، ستينوتروفوموناس، بوركولديريا وغيرها؛ لا تُفترض حساسية مشتركة بينها.",
+      "descriptionEn": "Pseudomonas, Acinetobacter, Stenotrophomonas, Burkholderia and related organisms; susceptibility is not interchangeable.",
+      "overviewEntryId": "spectrum_distribution-p4-t1-r5",
+      "organismEntryIds": [
+        "spectrum_distribution-p7-t2-r1",
+        "spectrum_distribution-p7-t2-r2",
+        "spectrum_distribution-p7-t2-r3",
+        "spectrum_distribution-p7-t2-r4",
+        "spectrum_distribution-p8-t1-r1",
+        "spectrum_distribution-p8-t1-r2",
+        "spectrum_distribution-p8-t1-r3",
+        "spectrum_distribution-p8-t1-r5",
+        "spectrum_distribution-p8-t1-r6"
+      ],
+      "coverageField": "Gram-negative",
+      "therapyEntryIds": [],
+      "deepDiveEntryIds": [
+        "bacteria_atlas-p35",
+        "bacteria_atlas-p36",
+        "bacteria_atlas-p37",
+        "bacteria_atlas-p38",
+        "bacteria_atlas-p39",
+        "bacteria_atlas-p40",
+        "bacteria_atlas-p63",
+        "bacteria_atlas-p64"
+      ]
+    },
+    {
+      "id": "anaerobes",
+      "titleAr": "الجراثيم اللاهوائية",
+      "titleEn": "Anaerobes",
+      "descriptionAr": "قسم مخصص يربط اللاهوائيات بمواضع الخراج والنخر والأسنان والحوض والبطن، ثم يعرض الأدوية الفعالة والفجوات.",
+      "descriptionEn": "A dedicated map linking anaerobes to abscess, necrosis, dental, pelvic and abdominal sources, then showing active options and gaps.",
+      "overviewEntryId": "spectrum_distribution-p4-t1-r6",
+      "organismEntryIds": [
+        "spectrum_distribution-p8-t1-r9",
+        "spectrum_distribution-p8-t1-r10",
+        "spectrum_distribution-p8-t1-r11",
+        "spectrum_distribution-p8-t1-r12",
+        "spectrum_distribution-p5-t2-r8",
+        "spectrum_distribution-p5-t2-r9",
+        "spectrum_distribution-p5-t2-r10",
+        "spectrum_distribution-p5-t2-r11"
+      ],
+      "coverageField": "Anaerobes",
+      "therapyEntryIds": [
+        "spectrum_distribution-p17-t1-r4",
+        "spectrum_distribution-p17-t1-r5",
+        "spectrum_distribution-p16-t2-r10",
+        "spectrum_quick-p7-t1-r10",
+        "spectrum_quick-p7-t1-r11",
+        "spectrum_quick-p13-t1-r7"
+      ],
+      "deepDiveEntryIds": [
+        "bacteria_atlas-p22",
+        "bacteria_atlas-p23",
+        "bacteria_atlas-p24",
+        "bacteria_atlas-p25",
+        "bacteria_atlas-p49",
+        "bacteria_atlas-p50",
+        "bacteria_atlas-p51",
+        "bacteria_atlas-p52"
+      ]
+    },
+    {
+      "id": "atypical_intracellular",
+      "titleAr": "اللانمطية وداخل الخلايا",
+      "titleEn": "Atypical & intracellular organisms",
+      "descriptionAr": "جراثيم تحتاج وصولاً داخل الخلايا أو لا تملك جداراً خلوياً؛ البيتا-لاكتام وحده غير كافٍ.",
+      "descriptionEn": "Organisms requiring intracellular exposure or lacking a cell wall; beta-lactam monotherapy is inadequate.",
+      "overviewEntryId": "spectrum_distribution-p4-t1-r7",
+      "organismEntryIds": [
+        "spectrum_distribution-p8-t1-r4",
+        "spectrum_distribution-p8-t1-r13",
+        "spectrum_distribution-p8-t1-r14",
+        "spectrum_distribution-p8-t1-r15",
+        "spectrum_distribution-p8-t1-r16",
+        "spectrum_distribution-p8-t1-r17",
+        "spectrum_distribution-p8-t1-r18"
+      ],
+      "coverageField": "Atypicals",
+      "therapyEntryIds": [
+        "drug_handbook-p33-t1-r1",
+        "drug_handbook-p32-t1-r6",
+        "drug_handbook-p32-t1-r11",
+        "drug_handbook-p32-t1-r12",
+        "drug_handbook-p33-t1-r2"
+      ],
+      "deepDiveEntryIds": [
+        "bacteria_atlas-p57",
+        "bacteria_atlas-p58",
+        "bacteria_atlas-p59",
+        "bacteria_atlas-p60"
+      ]
+    },
+    {
+      "id": "spirochetes",
+      "titleAr": "الملتويات",
+      "titleEn": "Spirochetes",
+      "descriptionAr": "الزهري والبوريليا مع نظم علاج مرتبطة بالمظهر السريري وإصابة الجهاز العصبي أو القلب.",
+      "descriptionEn": "Syphilis and Borrelia regimens linked to manifestation and CNS or cardiac involvement.",
+      "overviewEntryId": "spectrum_distribution-p4-t1-r8",
+      "organismEntryIds": [
+        "spectrum_distribution-p8-t1-r19",
+        "spectrum_distribution-p8-t1-r20"
+      ],
+      "coverageField": "",
+      "therapyEntryIds": [
+        "drug_handbook-p32-t1-r1",
+        "drug_handbook-p32-t1-r2",
+        "drug_handbook-p32-t1-r3",
+        "drug_handbook-p32-t1-r4",
+        "drug_handbook-p32-t1-r5"
+      ],
+      "deepDiveEntryIds": []
+    },
+    {
+      "id": "mycobacteria",
+      "titleAr": "المتفطرات",
+      "titleEn": "Mycobacteria",
+      "descriptionAr": "السل والمتفطرات غير السلية ضمن استراتيجيات متعددة الأدوية وتحديد النوع والمقاومة.",
+      "descriptionEn": "Tuberculosis and NTM interpreted through species-level, multidrug and resistance-specific strategies.",
+      "overviewEntryId": "spectrum_distribution-p4-t1-r8",
+      "organismEntryIds": [
+        "spectrum_distribution-p8-t1-r21",
+        "spectrum_distribution-p8-t1-r22"
+      ],
+      "coverageField": "",
+      "therapyEntryIds": [
+        "drug_handbook-p29-t2-r1",
+        "drug_handbook-p29-t2-r2",
+        "drug_handbook-p29-t2-r3",
+        "drug_handbook-p29-t2-r4",
+        "drug_handbook-p29-t2-r5",
+        "drug_handbook-p29-t2-r6",
+        "drug_handbook-p29-t2-r7"
+      ],
+      "deepDiveEntryIds": []
+    }
+  ],
+  "infectionGroups": [
+    {
+      "id": "respiratory",
+      "titleAr": "التهابات الجهاز التنفسي",
+      "titleEn": "Respiratory tract",
+      "descriptionAr": "الأعراض المحتملة، الممرضات المتوقعة، النظام التجريبي، والتعديل أو الإجراء الحاسم.",
+      "descriptionEn": "Likely pathogens, empiric regimen and the key modifier or immediate action.",
+      "entryIds": [
+        "empiric_quick-p8-t1-r1",
+        "empiric_quick-p8-t1-r2",
+        "empiric_quick-p8-t1-r3",
+        "empiric_quick-p8-t1-r4",
+        "empiric_quick-p8-t1-r5",
+        "empiric_quick-p8-t1-r6",
+        "empiric_quick-p8-t1-r7",
+        "empiric_quick-p8-t1-r8",
+        "empiric_quick-p8-t1-r9"
+      ]
+    },
+    {
+      "id": "cns",
+      "titleAr": "التهابات الجهاز العصبي المركزي",
+      "titleEn": "Central nervous system",
+      "descriptionAr": "الأعراض المحتملة، الممرضات المتوقعة، النظام التجريبي، والتعديل أو الإجراء الحاسم.",
+      "descriptionEn": "Likely pathogens, empiric regimen and the key modifier or immediate action.",
+      "entryIds": [
+        "empiric_quick-p9-t1-r1",
+        "empiric_quick-p9-t1-r2",
+        "empiric_quick-p9-t1-r3",
+        "empiric_quick-p9-t1-r4",
+        "empiric_quick-p9-t1-r5",
+        "empiric_quick-p9-t1-r6"
+      ]
+    },
+    {
+      "id": "blood_endovascular",
+      "titleAr": "الإنتان والدم والأوعية",
+      "titleEn": "Sepsis, bloodstream & endovascular",
+      "descriptionAr": "الأعراض المحتملة، الممرضات المتوقعة، النظام التجريبي، والتعديل أو الإجراء الحاسم.",
+      "descriptionEn": "Likely pathogens, empiric regimen and the key modifier or immediate action.",
+      "entryIds": [
+        "empiric_quick-p10-t1-r1",
+        "empiric_quick-p10-t1-r2",
+        "empiric_quick-p10-t1-r3",
+        "empiric_quick-p10-t1-r4",
+        "empiric_quick-p10-t1-r5",
+        "empiric_quick-p10-t1-r6",
+        "empiric_quick-p10-t1-r7"
+      ]
+    },
+    {
+      "id": "urinary_genital",
+      "titleAr": "المسالك البولية والتناسلية",
+      "titleEn": "Urinary & genital tract",
+      "descriptionAr": "الأعراض المحتملة، الممرضات المتوقعة، النظام التجريبي، والتعديل أو الإجراء الحاسم.",
+      "descriptionEn": "Likely pathogens, empiric regimen and the key modifier or immediate action.",
+      "entryIds": [
+        "empiric_quick-p11-t1-r1",
+        "empiric_quick-p11-t1-r2",
+        "empiric_quick-p11-t1-r3",
+        "empiric_quick-p11-t1-r4",
+        "empiric_quick-p11-t1-r5",
+        "empiric_quick-p11-t1-r6",
+        "empiric_quick-p11-t1-r7",
+        "empiric_quick-p11-t1-r8"
+      ]
+    },
+    {
+      "id": "abdominal_hepatobiliary",
+      "titleAr": "البطن والكبد والمرارة والمطثية العسيرة",
+      "titleEn": "Intra-abdominal, hepatobiliary & C. difficile",
+      "descriptionAr": "الأعراض المحتملة، الممرضات المتوقعة، النظام التجريبي، والتعديل أو الإجراء الحاسم.",
+      "descriptionEn": "Likely pathogens, empiric regimen and the key modifier or immediate action.",
+      "entryIds": [
+        "empiric_quick-p12-t1-r1",
+        "empiric_quick-p12-t1-r2",
+        "empiric_quick-p12-t1-r3",
+        "empiric_quick-p12-t1-r4",
+        "empiric_quick-p12-t1-r5",
+        "empiric_quick-p12-t1-r6",
+        "empiric_quick-p12-t1-r7"
+      ]
+    },
+    {
+      "id": "skin_wound",
+      "titleAr": "الجلد والأنسجة الرخوة والجروح",
+      "titleEn": "Skin, soft tissue & wounds",
+      "descriptionAr": "الأعراض المحتملة، الممرضات المتوقعة، النظام التجريبي، والتعديل أو الإجراء الحاسم.",
+      "descriptionEn": "Likely pathogens, empiric regimen and the key modifier or immediate action.",
+      "entryIds": [
+        "empiric_quick-p13-t1-r1",
+        "empiric_quick-p13-t1-r2",
+        "empiric_quick-p13-t1-r3",
+        "empiric_quick-p13-t1-r4",
+        "empiric_quick-p13-t1-r5",
+        "empiric_quick-p13-t1-r6",
+        "empiric_quick-p13-t1-r7",
+        "empiric_quick-p13-t1-r8",
+        "empiric_quick-p13-t1-r9"
+      ]
+    },
+    {
+      "id": "bone_joint",
+      "titleAr": "العظم والمفصل والأجهزة",
+      "titleEn": "Bone, joint & hardware",
+      "descriptionAr": "الأعراض المحتملة، الممرضات المتوقعة، النظام التجريبي، والتعديل أو الإجراء الحاسم.",
+      "descriptionEn": "Likely pathogens, empiric regimen and the key modifier or immediate action.",
+      "entryIds": [
+        "empiric_quick-p14-t1-r1",
+        "empiric_quick-p14-t1-r2",
+        "empiric_quick-p14-t1-r3",
+        "empiric_quick-p14-t1-r4",
+        "empiric_quick-p14-t1-r5",
+        "empiric_quick-p14-t1-r6"
+      ]
+    },
+    {
+      "id": "ent_dental",
+      "titleAr": "الأنف والأذن والحنجرة والأسنان",
+      "titleEn": "ENT & dental",
+      "descriptionAr": "الأعراض المحتملة، الممرضات المتوقعة، النظام التجريبي، والتعديل أو الإجراء الحاسم.",
+      "descriptionEn": "Likely pathogens, empiric regimen and the key modifier or immediate action.",
+      "entryIds": [
+        "empiric_quick-p15-t1-r1",
+        "empiric_quick-p15-t1-r2",
+        "empiric_quick-p15-t1-r3",
+        "empiric_quick-p15-t1-r4",
+        "empiric_quick-p15-t1-r5",
+        "empiric_quick-p15-t1-r6",
+        "empiric_quick-p15-t1-r7"
+      ]
+    },
+    {
+      "id": "ob_gyn",
+      "titleAr": "النسائية والتوليد",
+      "titleEn": "Obstetric & gynecologic",
+      "descriptionAr": "الأعراض المحتملة، الممرضات المتوقعة، النظام التجريبي، والتعديل أو الإجراء الحاسم.",
+      "descriptionEn": "Likely pathogens, empiric regimen and the key modifier or immediate action.",
+      "entryIds": [
+        "empiric_quick-p16-t1-r1",
+        "empiric_quick-p16-t1-r2",
+        "empiric_quick-p16-t1-r3",
+        "empiric_quick-p16-t1-r4",
+        "empiric_quick-p16-t1-r5",
+        "empiric_quick-p16-t1-r6"
+      ]
+    },
+    {
+      "id": "immunocompromised",
+      "titleAr": "المريض ناقص المناعة",
+      "titleEn": "Immunocompromised host",
+      "descriptionAr": "الأعراض المحتملة، الممرضات المتوقعة، النظام التجريبي، والتعديل أو الإجراء الحاسم.",
+      "descriptionEn": "Likely pathogens, empiric regimen and the key modifier or immediate action.",
+      "entryIds": [
+        "empiric_quick-p17-t1-r1",
+        "empiric_quick-p17-t1-r2",
+        "empiric_quick-p17-t1-r3",
+        "empiric_quick-p17-t1-r4",
+        "empiric_quick-p17-t1-r5"
+      ]
+    },
+    {
+      "id": "nicu_pediatric",
+      "titleAr": "حديثو الولادة والأطفال",
+      "titleEn": "NICU & pediatrics",
+      "descriptionAr": "الأعراض المحتملة، الممرضات المتوقعة، النظام التجريبي، والتعديل أو الإجراء الحاسم.",
+      "descriptionEn": "Likely pathogens, empiric regimen and the key modifier or immediate action.",
+      "entryIds": [
+        "empiric_quick-p18-t1-r1",
+        "empiric_quick-p18-t1-r2",
+        "empiric_quick-p18-t1-r3",
+        "empiric_quick-p18-t1-r4",
+        "empiric_quick-p18-t1-r5",
+        "empiric_quick-p18-t1-r6",
+        "empiric_quick-p18-t1-r7",
+        "empiric_quick-p18-t1-r8"
+      ]
+    }
+  ],
+  "tissueSites": [
+    {
+      "id": "blood",
+      "titleAr": "مجرى الدم والشغاف",
+      "titleEn": "Bloodstream & endocardium",
+      "descriptionAr": "التعرّض المصلي الملائم مع الانتباه إلى الأدوية غير المناسبة لتجرثم الدم الأولي.",
+      "descriptionEn": "Serum exposure with explicit avoidance of agents unsuitable for primary bacteremia.",
+      "matrixField": "Blood",
+      "summaryEntryIds": [
+        "drug_handbook-p35-t1-r4"
+      ],
+      "supportEntryIds": []
+    },
+    {
+      "id": "cns",
+      "titleAr": "الجهاز العصبي المركزي",
+      "titleEn": "Central nervous system",
+      "descriptionAr": "اختراق السحايا والدماغ يتغير مع الالتهاب والجرعة وطبيعة الدواء.",
+      "descriptionEn": "CNS exposure varies with inflammation, dose and drug properties.",
+      "matrixField": "CNS",
+      "summaryEntryIds": [
+        "drug_handbook-p34-t1-r1"
+      ],
+      "supportEntryIds": []
+    },
+    {
+      "id": "lung",
+      "titleAr": "الرئة والحويصلات",
+      "titleEn": "Lung & alveoli",
+      "descriptionAr": "يفصل بين وصول الدواء للنسيج وبين تعطله في الحويصلات أو ضعف العلاج الأحادي.",
+      "descriptionEn": "Separates tissue delivery from alveolar inactivation and unreliable monotherapy.",
+      "matrixField": "Lung",
+      "summaryEntryIds": [
+        "drug_handbook-p34-t1-r2"
+      ],
+      "supportEntryIds": []
+    },
+    {
+      "id": "bone",
+      "titleAr": "العظم والمفصل",
+      "titleEn": "Bone & joint",
+      "descriptionAr": "الاختراق النسيجي مع دور الجراحة والأجهزة والبيوفيلم ومدة العلاج.",
+      "descriptionEn": "Tissue exposure interpreted with surgery, hardware, biofilm and treatment duration.",
+      "matrixField": "Bone",
+      "summaryEntryIds": [
+        "drug_handbook-p35-t1-r1"
+      ],
+      "supportEntryIds": [
+        "spectrum_quick-p13-t1-r1"
+      ]
+    },
+    {
+      "id": "urinary",
+      "titleAr": "المثانة والكلية والبول",
+      "titleEn": "Bladder, kidney & urine",
+      "descriptionAr": "تمييز دواء المثانة عن علاج النسيج الكلوي أو تجرثم الدم البولي.",
+      "descriptionEn": "Distinguishes bladder-lumen drugs from renal parenchymal or urosepsis therapy.",
+      "matrixField": "Urine",
+      "summaryEntryIds": [
+        "drug_handbook-p34-t1-r3"
+      ],
+      "supportEntryIds": [
+        "spectrum_quick-p13-t1-r3",
+        "spectrum_quick-p13-t1-r4"
+      ]
+    },
+    {
+      "id": "prostate",
+      "titleAr": "البروستات",
+      "titleEn": "Prostate",
+      "descriptionAr": "العوامل ذات التركيز البروستاتي المفيد وما يجب تجنبه.",
+      "descriptionEn": "Agents with useful prostatic exposure and major avoidances.",
+      "matrixField": "Prostate",
+      "summaryEntryIds": [
+        "drug_handbook-p34-t1-r4"
+      ],
+      "supportEntryIds": [
+        "spectrum_quick-p13-t1-r5"
+      ]
+    },
+    {
+      "id": "bile",
+      "titleAr": "الصفراء والطرق الصفراوية",
+      "titleEn": "Bile & biliary tract",
+      "descriptionAr": "الاختراق الصفراوي لا يعوض تصريف الانسداد.",
+      "descriptionEn": "Biliary penetration cannot replace drainage of obstruction.",
+      "matrixField": "Bile",
+      "summaryEntryIds": [
+        "drug_handbook-p35-t1-r2"
+      ],
+      "supportEntryIds": [
+        "spectrum_quick-p13-t1-r6"
+      ]
+    },
+    {
+      "id": "abscess",
+      "titleAr": "الخراج والبطن",
+      "titleEn": "Abscess & intra-abdominal space",
+      "descriptionAr": "وصول اللاهوائيات والهوائيات مع أولوية تصريف الخراج والسيطرة على المصدر.",
+      "descriptionEn": "Aerobic and anaerobic exposure with drainage and source control as priorities.",
+      "matrixField": "",
+      "summaryEntryIds": [
+        "drug_handbook-p35-t1-r3"
+      ],
+      "supportEntryIds": [
+        "spectrum_quick-p13-t1-r7"
+      ]
+    },
+    {
+      "id": "skin",
+      "titleAr": "الجلد والأنسجة الرخوة",
+      "titleEn": "Skin & soft tissue",
+      "descriptionAr": "الاختراق يتأثر بالتروية والوذمة والنخر، والجراحة حاسمة عند الحاجة.",
+      "descriptionEn": "Penetration is limited by perfusion, edema and necrosis; surgery remains decisive when indicated.",
+      "matrixField": "",
+      "summaryEntryIds": [],
+      "supportEntryIds": [
+        "spectrum_distribution-p28-t1-r1",
+        "spectrum_quick-p13-t1-r2"
+      ]
+    },
+    {
+      "id": "intracellular",
+      "titleAr": "داخل الخلايا",
+      "titleEn": "Intracellular distribution",
+      "descriptionAr": "تصنيف العوامل الأعلى وصولاً داخل الخلايا مقابل العوامل ضعيفة الدخول.",
+      "descriptionEn": "Ranks agents with strong intracellular activity against weak-entry families.",
+      "matrixField": "Intracellular",
+      "summaryEntryIds": [],
+      "supportEntryIds": [
+        "spectrum_distribution-p28-t1-r7",
+        "spectrum_distribution-p28-t1-r8",
+        "spectrum_distribution-p28-t1-r9",
+        "spectrum_distribution-p28-t1-r10"
+      ]
+    }
+  ],
+  "spectrumEntryIds": [
+    "spectrum_distribution-p10-t1-r1",
+    "spectrum_distribution-p10-t1-r2",
+    "spectrum_distribution-p11-t1-r1",
+    "spectrum_distribution-p11-t1-r2",
+    "spectrum_distribution-p11-t1-r3",
+    "spectrum_distribution-p11-t1-r4",
+    "spectrum_distribution-p11-t1-r5",
+    "spectrum_distribution-p11-t1-r6",
+    "spectrum_distribution-p11-t1-r7",
+    "spectrum_distribution-p11-t1-r8",
+    "spectrum_distribution-p11-t1-r9",
+    "spectrum_distribution-p11-t1-r10",
+    "spectrum_distribution-p11-t1-r11",
+    "spectrum_distribution-p11-t1-r12",
+    "spectrum_distribution-p11-t1-r13",
+    "spectrum_distribution-p11-t1-r14",
+    "spectrum_distribution-p11-t1-r15",
+    "spectrum_distribution-p11-t1-r16",
+    "spectrum_distribution-p11-t1-r17",
+    "spectrum_distribution-p11-t1-r18",
+    "spectrum_distribution-p11-t1-r19",
+    "spectrum_distribution-p11-t1-r20",
+    "spectrum_distribution-p11-t1-r21"
+  ],
+  "penetrationEntryIds": [
+    "spectrum_distribution-p22-t1-r1",
+    "spectrum_distribution-p22-t1-r2",
+    "spectrum_distribution-p23-t1-r1",
+    "spectrum_distribution-p23-t1-r2",
+    "spectrum_distribution-p23-t1-r3",
+    "spectrum_distribution-p23-t1-r4",
+    "spectrum_distribution-p23-t1-r5",
+    "spectrum_distribution-p23-t1-r6",
+    "spectrum_distribution-p23-t1-r7",
+    "spectrum_distribution-p23-t1-r8",
+    "spectrum_distribution-p23-t1-r9",
+    "spectrum_distribution-p23-t1-r10",
+    "spectrum_distribution-p23-t1-r11",
+    "spectrum_distribution-p23-t1-r12",
+    "spectrum_distribution-p23-t1-r13",
+    "spectrum_distribution-p23-t1-r14",
+    "spectrum_distribution-p23-t1-r15",
+    "spectrum_distribution-p23-t1-r16",
+    "spectrum_distribution-p23-t1-r17"
+  ]
+}
