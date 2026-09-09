@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "ACCP QBank 2026"
+rootProject.name = "Clinical Antibiotic Encyclopedia 2026"
 
 include(":app")

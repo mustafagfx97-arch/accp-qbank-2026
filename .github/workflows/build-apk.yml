@@ -1,65 +1,67 @@
-name: Build ACCP Android APK
+name: Build Antibiotic Encyclopedia APK
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-    paths:
-      - "app/**"
-      - "gradle/**"
-      - "*.gradle.kts"
-      - "gradle.properties"
-      - ".github/workflows/build-apk.yml"
-
-permissions:
-  contents: read
+      - 'build/**'
+      - 'feature/**'
 
 jobs:
-  build-debug-apk:
-    name: Build verified debug APK
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 35
 
     steps:
-      - name: Checkout source
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: '17'
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Set up Gradle 9.3.1
-        uses: gradle/actions/setup-gradle@v4
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
         with:
-          gradle-version: "9.3.1"
+          gradle-version: '9.3.1'
+
+      - name: Validate bundled clinical data
+        run: |
+          gzip -dc app/src/main/assets/encyclopedia.json.gz > /tmp/encyclopedia.json
+          python3 tools/validate_content.py \
+            --dataset /tmp/encyclopedia.json \
+            --report data/checkpoints/content-report.json
 
       - name: Create debug signing key
-        run: |
-          if [ ! -f debug.keystore ]; then
-            keytool -genkeypair -v \
-              -keystore debug.keystore \
-              -storepass android \
-              -alias androiddebugkey \
-              -keypass android \
-              -dname "CN=Android Debug,O=Android,C=US" \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 10000
-          fi
+        run: >-
+          keytool -genkeypair -v
+          -keystore debug.keystore
+          -storepass android
+          -alias androiddebugkey
+          -keypass android
+          -keyalg RSA
+          -keysize 2048
+          -validity 10000
+          -dname "CN=Android Debug,O=Clinical Antibiotic Encyclopedia,C=IQ"
 
-      - name: Build APK
-        run: gradle --no-daemon --stacktrace :app:assembleDebug
+      - name: Build debug APK
+        run: gradle --no-daemon :app:assembleDebug
+
+      - name: Verify packaged database
+        run: |
+          unzip -p app/build/outputs/apk/debug/app-debug.apk assets/encyclopedia.json > /tmp/packaged-encyclopedia.json
+          echo "4317e8ec7ce842ed2d7d34dc3299ec2f9d019f062e2ae27870b7067194d611d4  /tmp/packaged-encyclopedia.json" | sha256sum --check
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ACCP-QBank-2026-debug
+          name: Clinical-Antibiotic-Encyclopedia-2026-v1.0
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30

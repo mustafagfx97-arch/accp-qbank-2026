@@ -1,22 +1,30 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Clinical Antibiotic Encyclopedia 2026
 
-# Run and deploy your AI Studio app
+تطبيق Android سريري يعمل بالكامل دون إنترنت، محوّل من موسوعة المضادات الحيوية التي أُعدّت لمراجعة البورد والعمل في الأجنحة وICU/NICU.
 
-This contains everything you need to run your app locally.
+## المحتوى الحالي
 
-View your app in AI Studio: https://ai.studio/apps/d1fc432e-3e23-44ac-94c6-1cdf6183f19d
+- 108 بطاقات دوائية منظّمة.
+- جرعات البالغين لكل بطاقة.
+- تعديل الكلى وHD/CRRT/RRT كما ورد في المصادر.
+- اعتبارات الكبد عندما يذكرها المصدر صراحة.
+- الطيف والاستعمالات السريرية وPK/PD والإعطاء والسمية والمراقبة.
+- 1,715 سجلًا قابلًا للبحث من 381 صفحة مصدر غير مكررة.
+- بحث حسب الدواء، البكتيريا، موقع العدوى، الانتشار النسيجي، الزرع وAST/MIC.
+- وضع Ward Quick Guide، حفظ العناصر، وواجهة عربية مع إبقاء المحتوى العلمي بالإنجليزية.
 
-## Run Locally
+## سلامة البيانات
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+يُولّد المحتوى بواسطة `tools/build_content.py`، ثم يُفحص بواسطة `tools/validate_content.py` ويُحزم كـ`encyclopedia.json.gz`. يفك Android ضغطه أثناء التغليف إلى `assets/encyclopedia.json`. يحتوي التطبيق على SHA-256 ثابت للبيانات الفعلية داخل APK ويرفض فتح قاعدة ناقصة أو متغيرة.
 
+الملف الجامع `Complete_Antibiotic_Master_Reference_2026.pdf` لم يُفهرس مرة ثانية لأن مجلداته الثلاثة موجودة بنسخها المستقلة؛ وبذلك لا تظهر النتائج مكررة.
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
-7. If you have already published your app in AI Studio, please [request upload key reset](https://support.google.com/googleplay/android-developer/answer/9842756#zippy=%2Crequest-an-upload-key-reset) in Google Play Console.
+## البناء
+
+يتطلب Java 17 وAndroid SDK 36. يمكن بناء نسخة Debug بالأمر:
+
+```bash
+gradle --no-daemon :app:assembleDebug
+```
+
+هذا مرجع تعليمي. يجب التحقق من نشرة المنتج الحالية، antibiogram المحلي، AST/MIC، وظائف الأعضاء، الحمل، الحساسية، وطريقة RRT قبل وصف العلاج.

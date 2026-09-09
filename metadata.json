@@ -1,6 +1,0 @@
-{
-  "name": "ACCP QBank 2026",
-  "description": "Clinical question bank for ACCP 2026 with 533 questions across 22 chapters, Instant Learning & Exam modes, and full offline persistence.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

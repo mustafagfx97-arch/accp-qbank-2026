@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "sourceCount": 8,
+  "sourcePages": 381,
+  "tableCount": 201,
+  "structuredEntryCount": 1334,
+  "pageEntryCount": 381,
+  "entryCount": 1715,
+  "drugCount": 108,
+  "entriesByKind": {
+    "antibiotic": 293,
+    "bacteria": 124,
+    "culture": 562,
+    "distribution": 38,
+    "infection": 188,
+    "quick": 145,
+    "reference": 365
+  },
+  "datasetBytes": 1990911,
+  "datasetSha256": "4317e8ec7ce842ed2d7d34dc3299ec2f9d019f062e2ae27870b7067194d611d4",
+  "sources": [
+    {
+      "id": "drug_handbook",
+      "filename": "Focused_Concise_Antibiotic_Reference_2026.pdf",
+      "title": "Focused & Concise Antibiotic Reference 2026",
+      "role": "Core drug pharmacology, dosing, renal/RRT and safety",
+      "quick": false,
+      "pages": 38,
+      "sha256": "dd666abd41ed9231c7bd7c0b7280b515ac0d7c9e23f7bfcca3936b3cad734cd7",
+      "bytes": 234235
+    },
+    {
+      "id": "spectrum_distribution",
+      "filename": "Clinical_Antibiotic_Spectrum_and_Tissue_Distribution_Handbook_2026.pdf",
+      "title": "Clinical Antibiotic Spectrum & Tissue Distribution Handbook 2026",
+      "role": "Organisms, spectrum, tissue penetration and site selection",
+      "quick": false,
+      "pages": 40,
+      "sha256": "7dff5124c2c0bdafd5aea22cc14f0a5d4aea9fcbce9dd8c640664a14c06efa0a",
+      "bytes": 1740063
+    },
+    {
+      "id": "empiric_therapy",
+      "filename": "Comprehensive_Empiric_Antibiotic_Therapy_Handbook_2026.pdf",
+      "title": "Comprehensive Empiric Antibiotic Therapy Handbook 2026",
+      "role": "Empiric therapy organized by infection syndrome",
+      "quick": false,
+      "pages": 60,
+      "sha256": "ffbad3f08fa744b5b4a1511b42a57bdb55a756e1aa4690bbbf27feee6cba5047",
+      "bytes": 1837580
+    },
+    {
+      "id": "bacteria_atlas",
+      "filename": "Bacteria_Centered_Antibiotic_Atlas_2026.pdf",
+      "title": "Bacteria-Centered Antibiotic Atlas 2026",
+      "role": "Organism-directed therapy and resistance rescue",
+      "quick": false,
+      "pages": 69,
+      "sha256": "a0e9a60c66730cab300315e5938ebb7fec90b17002bbb5a7530f2efbcf91dc2d",
+      "bytes": 1426896
+    },
+    {
+      "id": "culture_master",
+      "filename": "Clinical_Culture_and_Diagnostic_Microbiology_Master_Reference_2026.pdf",
+      "title": "Clinical Culture & Diagnostic Microbiology Master Reference 2026",
+      "role": "Culture validity, specimens, AST/MIC and diagnostic stewardship",
+      "quick": false,
+      "pages": 65,
+      "sha256": "ebe5a3312eeb0ebc324da2adfae6ea3088fb33e108db65d0ffc65cd21584e06c",
+      "bytes": 1055357
+    },
+    {
+      "id": "culture_encyclopedia",
+      "filename": "Clinical_Microbiology_Culture_Encyclopedia_2026.pdf",
+      "title": "Clinical Microbiology Culture Encyclopedia 2026",
+      "role": "Expanded culture interpretation and case-based diagnostics",
+      "quick": false,
+      "pages": 66,
+      "sha256": "4a8aef80c8711891ec7ebba0874a8b35da6424d437b7f41928ed53ac662ba3be",
+      "bytes": 902470
+    },
+    {
+      "id": "spectrum_quick",
+      "filename": "Antibiotic_Spectrum_and_Distribution_Compact_Ward_Guide_2026.pdf",
+      "title": "Antibiotic Spectrum & Distribution Ward Pocket Guide 2026",
+      "role": "Fast ward review of spectrum and penetration",
+      "quick": true,
+      "pages": 18,
+      "sha256": "c0d67cb6ee81adb7c49b8d179371daf56acf7163ba3740d0dad184b9245b862e",
+      "bytes": 650797
+    },
+    {
+      "id": "empiric_quick",
+      "filename": "Empiric_Antibiotic_Therapy_Compact_Ward_Guide_2026.pdf",
+      "title": "Empiric Antibiotic Therapy Compact Ward Guide 2026",
+      "role": "Fast syndrome-based empiric selection",
+      "quick": true,
+      "pages": 25,
+      "sha256": "da419ed5b803b9ccaa8d94a1f7e0a54dc74c28593f3fbfb31f268afa61c791e0",
+      "bytes": 703196
+    }
+  ]
+}
