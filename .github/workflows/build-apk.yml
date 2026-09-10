@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Java 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -35,11 +35,17 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Set up Gradle 9.3.1
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: "9.3.1"
 
-      - name: Create debug signing key
+      - name: Restore stable debug signing key
+        uses: actions/cache@v4
+        with:
+          path: debug.keystore
+          key: accp-qbank-2026-debug-keystore-v1
+
+      - name: Create debug signing key when absent
         run: |
           if [ ! -f debug.keystore ]; then
             keytool -genkeypair -v \
@@ -47,19 +53,24 @@ jobs:
               -storepass android \
               -alias androiddebugkey \
               -keypass android \
-              -dname "CN=Android Debug,O=Android,C=US" \
+              -dname "CN=Android Debug,O=ACCP QBank 2026,C=IQ" \
               -keyalg RSA \
               -keysize 2048 \
               -validity 10000
           fi
 
-      - name: Build APK
-        run: gradle --no-daemon --stacktrace :app:assembleDebug
+      - name: Test and build APK
+        run: gradle --no-daemon --stacktrace :app:testDebugUnitTest :app:assembleDebug
+
+      - name: Verify packaged question bank
+        run: |
+          unzip -p app/build/outputs/apk/debug/app-debug.apk assets/questions.json > /tmp/questions.json
+          echo "d285391e4ec2debe39a1ca6be969cf265c53d41c0cdf70003fb3631fa35cfb75  /tmp/questions.json" | sha256sum --check
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ACCP-QBank-2026-debug
+          name: ACCP-QBank-2026-v1.1-Case-Sequencing
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
