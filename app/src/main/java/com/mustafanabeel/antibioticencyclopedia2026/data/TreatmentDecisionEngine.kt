@@ -269,9 +269,9 @@ class TreatmentDecisionEngine(
                     addAll(drug.aliases)
                     add(drug.name)
                     addAll(drug.name.split(" / "))
-                    MANUAL_DRUG_ALIASES[drug.name]?.let(::addAll)
+                    MANUAL_DRUG_ALIASES[drug.name]?.let { addAll(it) }
                 }
-                    .map(String::normalized)
+                    .map { it.normalized() }
                     .filter { it.length >= 4 }
                     .distinct()
                 val longestMatch = candidates.filter(normalizedText::contains).maxOfOrNull(String::length) ?: 0
@@ -281,7 +281,7 @@ class TreatmentDecisionEngine(
             .sortedByDescending { (_, score) -> score }
             .distinctBy { (drug, _) -> drug.name.removeSuffix(" for TB") }
             .take(12)
-            .map(Pair<DrugRecord, Int>::first)
+            .map { it.first }
     }
 
     private fun decisionNotes(
