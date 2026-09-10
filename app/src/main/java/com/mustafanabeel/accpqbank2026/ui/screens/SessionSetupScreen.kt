@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafanabeel.accpqbank2026.data.repository.SessionConfig
+import com.mustafanabeel.accpqbank2026.data.repository.SessionQuestionOrder
 import com.mustafanabeel.accpqbank2026.ui.theme.TealOnPrimary
 import com.mustafanabeel.accpqbank2026.ui.theme.TealPrimary
 import com.mustafanabeel.accpqbank2026.ui.viewmodel.QBankViewModel
@@ -70,6 +71,7 @@ fun SessionSetupScreen(
     var selectedMode by remember { mutableStateOf("instant") }
     var selectedType by remember { mutableStateOf("all") }
     var selectedStatus by remember { mutableStateOf("all") }
+    var selectedOrder by remember { mutableStateOf(SessionQuestionOrder.BOOK) }
     var selectedChapterIds by remember { mutableStateOf(setOf<String>()) }
     var questionCount by remember { mutableIntStateOf(20) }
 
@@ -116,7 +118,11 @@ fun SessionSetupScreen(
                             color = TealPrimary
                         )
                         Text(
-                            text = if (selectedMode == "instant") "نمط مراجعة فورية" else "نمط امتحان نهائي",
+                            text = if (selectedOrder == SessionQuestionOrder.BOOK) {
+                                "بالترتيب الأصلي للكتاب"
+                            } else {
+                                "عشوائي مع تجميع الحالة"
+                            },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -129,6 +135,7 @@ fun SessionSetupScreen(
                                 questionType = selectedType,
                                 selectedChapterIds = selectedChapterIds,
                                 statusFilter = selectedStatus,
+                                questionOrder = selectedOrder,
                                 questionCount = questionCount
                             )
                             viewModel.startSession(config, onStartQuiz)
@@ -275,7 +282,44 @@ fun SessionSetupScreen(
 
             item {
                 Text(
-                    text = "4. عدد الأسئلة (Question Count)",
+                    text = "4. ترتيب الأسئلة (Question Order)",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    FilterChip(
+                        selected = selectedOrder == SessionQuestionOrder.BOOK,
+                        onClick = { selectedOrder = SessionQuestionOrder.BOOK },
+                        label = { Text("ترتيب الكتاب") },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = TealPrimary,
+                            selectedLabelColor = TealOnPrimary
+                        )
+                    )
+                    FilterChip(
+                        selected = selectedOrder == SessionQuestionOrder.RANDOM,
+                        onClick = { selectedOrder = SessionQuestionOrder.RANDOM },
+                        label = { Text("عشوائي — الحالة تبقى معاً") },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = TealPrimary,
+                            selectedLabelColor = TealOnPrimary
+                        )
+                    )
+                }
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "أسئلة Patient Case الواحدة ستظهر متجاورة ومرتبة. قد يزيد العدد المحدد قليلاً لإكمال الحالة.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            item {
+                Text(
+                    text = "5. عدد الأسئلة (Question Count)",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -302,7 +346,7 @@ fun SessionSetupScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "5. الفصول المستهدفة (${selectedChapterIds.size}/${chapters.size})",
+                        text = "6. الفصول المستهدفة (${selectedChapterIds.size}/${chapters.size})",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -6,6 +6,10 @@
 
 This contains everything you need to run your app locally.
 
+Version 1.1 preserves the original book order by default and keeps every multi-question
+Patient Case together. A separate random mode shuffles complete case blocks instead of
+shuffling their questions independently.
+
 View your app in AI Studio: https://ai.studio/apps/d1fc432e-3e23-44ac-94c6-1cdf6183f19d
 
 ## Run Locally

@@ -24,6 +24,7 @@ data class SessionConfig(
     val questionType: String = "all",
     val selectedChapterIds: Set<String> = emptySet(),
     val statusFilter: String = "all",
+    val questionOrder: String = SessionQuestionOrder.BOOK,
     val questionCount: Int = 20,
     val timedMode: Boolean = false,
     val timeLimitMinutes: Int = 30
@@ -206,6 +207,10 @@ class QBankRepository(private val context: Context) {
                 else -> pool
             }
 
+            // Keep this pre-status-filter pool so selecting one bookmarked/incorrect question from
+            // a shared Patient Case can restore the complete vignette and its companion questions.
+            val availableForSelectedScope = pool
+
             val attempts = attemptDao.getAllAttempts().first()
             val latestAttempts = attempts.groupBy { it.questionId }
                 .mapValues { it.value.first() }
@@ -220,12 +225,23 @@ class QBankRepository(private val context: Context) {
                 else -> pool
             }
 
-            val shuffled = pool.shuffled()
-            if (config.questionCount > 0 && config.questionCount < shuffled.size) {
-                shuffled.take(config.questionCount)
-            } else {
-                shuffled
+            if (config.statusFilter != "all") {
+                pool = SessionQuestionPlanner.expandMatchedCaseGroups(
+                    matchedQuestions = pool,
+                    availableQuestions = availableForSelectedScope
+                )
             }
+
+            val chapterOrder = chapterDao.getAllChapters().first()
+                .mapIndexed { index, chapter -> chapter.id to index }
+                .toMap()
+
+            SessionQuestionPlanner.plan(
+                questions = pool,
+                chapterOrder = chapterOrder,
+                requestedCount = config.questionCount,
+                order = config.questionOrder
+            )
         }
 
     suspend fun getQuestionById(id: String): QuestionEntity? = withContext(Dispatchers.IO) {

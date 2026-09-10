@@ -10,6 +10,7 @@ import com.mustafanabeel.accpqbank2026.data.local.entity.QuestionEntity
 import com.mustafanabeel.accpqbank2026.data.local.entity.SessionEntity
 import com.mustafanabeel.accpqbank2026.data.repository.QBankRepository
 import com.mustafanabeel.accpqbank2026.data.repository.SessionConfig
+import com.mustafanabeel.accpqbank2026.data.repository.SessionQuestionOrder
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -174,6 +175,7 @@ class QBankViewModel(application: Application) : AndroidViewModel(application) {
         startSession(
             SessionConfig(
                 mode = "instant",
+                questionOrder = SessionQuestionOrder.RANDOM,
                 questionCount = 10
             ),
             onReady = onReady

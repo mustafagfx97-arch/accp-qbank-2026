@@ -46,6 +46,35 @@ class QuestionBankIntegrityTest {
             assertTrue(root.questions.any { it.chapterId == chapterId && it.type == "assessment" })
             assertTrue(root.questions.any { it.chapterId == chapterId && it.type == "case" })
         }
+
+        root.chapters.forEach { chapter ->
+            listOf("assessment", "case").forEach { type ->
+                val numbers = root.questions
+                    .filter { it.chapterId == chapter.id && it.type == type }
+                    .map { it.number }
+                assertEquals(
+                    "$type numbering differs from the book in ${chapter.id}",
+                    (1..numbers.size).toList(),
+                    numbers
+                )
+            }
+        }
+
+        val sharedCases = root.questions
+            .filter { it.type == "case" && !it.caseContext.isNullOrBlank() }
+            .groupBy { question ->
+                val normalizedContext = question.caseContext.orEmpty()
+                    .trim()
+                    .replace(Regex("\\s+"), " ")
+                    .lowercase()
+                "${question.chapterId}\u0000$normalizedContext"
+            }
+        assertEquals(37, sharedCases.size)
+        assertEquals(101, sharedCases.values.sumOf { it.size })
+        sharedCases.values.forEach { questions ->
+            val numbers = questions.map { it.number }
+            assertEquals((numbers.min()..numbers.max()).toList(), numbers)
+        }
     }
 
     private companion object {

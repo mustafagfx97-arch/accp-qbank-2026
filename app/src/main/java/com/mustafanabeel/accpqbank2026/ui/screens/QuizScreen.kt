@@ -72,6 +72,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mustafanabeel.accpqbank2026.data.local.entity.QuestionEntity
+import com.mustafanabeel.accpqbank2026.data.repository.SessionQuestionPlanner
 import com.mustafanabeel.accpqbank2026.ui.theme.CorrectGreen
 import com.mustafanabeel.accpqbank2026.ui.theme.CorrectGreenContainer
 import com.mustafanabeel.accpqbank2026.ui.theme.DarkTealPrimaryContainer
@@ -154,6 +155,12 @@ fun QuizScreen(
     val isInstantSubmitted = quizState.submittedInstant.contains(currentQuestion.id)
     val selectedOption = quizState.selectedAnswers[currentQuestion.id]
     val isFlagged = quizState.flaggedQuestionIds.contains(currentQuestion.id)
+    val sharedCaseQuestions = remember(quizState.questions, currentQuestion.id) {
+        SessionQuestionPlanner.sharedCaseQuestions(quizState.questions, currentQuestion)
+    }
+    val sharedCasePosition = sharedCaseQuestions
+        .indexOfFirst { it.id == currentQuestion.id }
+        .coerceAtLeast(0) + 1
 
     // Formatted time mm:ss
     val minutes = quizState.elapsedSeconds / 60
@@ -327,6 +334,13 @@ fun QuizScreen(
                                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                            if (sharedCaseQuestions.size > 1) {
+                                StatusBadge(
+                                    text = "CASE $sharedCasePosition/${sharedCaseQuestions.size}",
+                                    containerColor = TealPrimary.copy(alpha = 0.12f),
+                                    contentColor = TealPrimary
+                                )
+                            }
                             if (currentQuestion.questionPage != null) {
                                 StatusBadge(
                                     text = "P. ${currentQuestion.questionPage}",
@@ -357,7 +371,11 @@ fun QuizScreen(
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text(
-                                        text = "CASE VIGNETTE",
+                                        text = if (sharedCaseQuestions.size > 1) {
+                                            "CASE VIGNETTE • QUESTION $sharedCasePosition OF ${sharedCaseQuestions.size}"
+                                        } else {
+                                            "CASE VIGNETTE"
+                                        },
                                         style = MaterialTheme.typography.labelMedium.copy(
                                             fontWeight = FontWeight.Bold,
                                             letterSpacing = 1.sp
