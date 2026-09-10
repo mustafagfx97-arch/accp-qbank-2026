@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.HealthAndSafety
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.filled.Medication
@@ -108,6 +109,7 @@ private const val HOME = "home"
 private const val SEARCH = "search"
 private const val SAVED = "saved"
 private const val ABOUT = "about"
+private const val TREATMENT_FINDER = "treatment-finder"
 
 private val LocalUiLanguage = staticCompositionLocalOf { UiLanguage.ARABIC }
 private val LocalToggleLanguage = staticCompositionLocalOf<() -> Unit> { {} }
@@ -240,7 +242,19 @@ private fun EncyclopediaNavigation(
                     },
                     onCatalog = { axis -> navController.navigate("catalog/${axis.key}") },
                     onAnaerobes = { navController.navigate("organism-family/anaerobes") },
+                    onTreatmentFinder = { navController.navigate(TREATMENT_FINDER) },
                     onAbout = { navController.navigate(ABOUT) },
+                )
+            }
+            composable(TREATMENT_FINDER) {
+                TreatmentFinderScreen(
+                    dataset = dataset,
+                    taxonomy = taxonomy,
+                    language = LocalUiLanguage.current,
+                    onBack = navController::popBackStack,
+                    onToggleLanguage = viewModel::toggleLanguage,
+                    onOpenEntry = { navController.navigate("entry/$it") },
+                    onOpenDrug = { navController.navigate("drug/$it") },
                 )
             }
             composable(SEARCH) {
@@ -415,6 +429,7 @@ private fun HomeScreen(
     onSearchCategory: (ContentFilter) -> Unit,
     onCatalog: (ClinicalAxis) -> Unit,
     onAnaerobes: () -> Unit,
+    onTreatmentFinder: () -> Unit,
     onAbout: () -> Unit,
 ) {
     val language = LocalUiLanguage.current
@@ -533,6 +548,9 @@ private fun HomeScreen(
             }
         }
         item {
+            TherapyFinderShortcut(language = language, onClick = onTreatmentFinder)
+        }
+        item {
             Row(
                 Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -602,6 +620,55 @@ private fun HomeScreen(
         }
         item {
             SafetyBanner(dataset.safetyNotice, Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
+        }
+    }
+}
+
+@Composable
+private fun TherapyFinderShortcut(
+    language: UiLanguage,
+    onClick: () -> Unit,
+) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 14.dp),
+        colors = CardDefaults.cardColors(containerColor = ClinicalTeal.copy(alpha = 0.13f)),
+        border = BorderStroke(1.dp, ClinicalTeal.copy(alpha = 0.5f)),
+        shape = RoundedCornerShape(22.dp),
+    ) {
+        Row(Modifier.padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
+            Surface(shape = CircleShape, color = ClinicalTeal.copy(alpha = 0.2f)) {
+                Icon(
+                    Icons.Default.HealthAndSafety,
+                    null,
+                    tint = ClinicalTeal,
+                    modifier = Modifier.padding(11.dp).size(28.dp),
+                )
+            }
+            Spacer(Modifier.width(13.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    language.text("مساعد اختيار العلاج", "Therapy decision aid"),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    language.text(
+                        "أدخل نوع الالتهاب أو المكان أو البكتيريا، ثم راجع أفضل مطابقة من المصادر.",
+                        "Enter an infection, site, or organism and review the closest source-backed match.",
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 19.sp,
+                )
+                Spacer(Modifier.height(7.dp))
+                Text(
+                    language.text("يعمل دون إنترنت أو اشتراك", "Works offline · no subscription"),
+                    color = ClinicalTeal,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                )
+            }
         }
     }
 }

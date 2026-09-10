@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "design": "deterministic-offline-source-crosswalk",
+  "directRegimens": 78,
+  "organismChoices": 81,
+  "tissueSites": 10,
+  "spectrumRows": 23,
+  "penetrationRows": 19,
+  "guardrails": [
+    "no generated regimens",
+    "site-only and organism-only queries abstain from a single regimen",
+    "severe/shock warning",
+    "beta-lactam allergy warning",
+    "renal/RRT monograph links",
+    "hepatic monograph links",
+    "AST/MIC and local-protocol reminder"
+  ]
+}
