@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - fix/case-study-sequencing-v1
     paths:
       - "app/**"
       - "gradle/**"
