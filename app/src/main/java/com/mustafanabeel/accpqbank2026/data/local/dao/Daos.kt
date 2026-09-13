@@ -38,16 +38,19 @@ interface QuestionDao {
     @Query("SELECT * FROM questions WHERE ocrStatus != 'source_missing' ORDER BY rowid ASC")
     fun getUsableQuestions(): Flow<List<QuestionEntity>>
 
-    @Query("SELECT * FROM questions WHERE chapterId = :chapterId AND ocrStatus != 'source_missing' ORDER BY number ASC")
+    // number resets between Assessment and Case Study, so sorting only by
+    // number interleaves the two sections. rowid preserves the exact trusted
+    // source order written from the repaired ACCP JSON.
+    @Query("SELECT * FROM questions WHERE chapterId = :chapterId AND ocrStatus != 'source_missing' ORDER BY rowid ASC")
     fun getQuestionsByChapter(chapterId: String): Flow<List<QuestionEntity>>
 
-    @Query("SELECT * FROM questions WHERE chapterId = :chapterId ORDER BY number ASC")
+    @Query("SELECT * FROM questions WHERE chapterId = :chapterId ORDER BY rowid ASC")
     fun getAllQuestionsInChapter(chapterId: String): Flow<List<QuestionEntity>>
 
     @Query("SELECT * FROM questions WHERE id = :id LIMIT 1")
     suspend fun getQuestionById(id: String): QuestionEntity?
 
-    @Query("SELECT * FROM questions WHERE id IN (:ids)")
+    @Query("SELECT * FROM questions WHERE id IN (:ids) ORDER BY rowid ASC")
     suspend fun getQuestionsByIds(ids: List<String>): List<QuestionEntity>
 
     @Query("SELECT COUNT(*) FROM questions")
@@ -62,7 +65,7 @@ interface QuestionDao {
     @Query("DELETE FROM questions")
     suspend fun deleteAll()
 
-    @Query("SELECT * FROM questions WHERE stem LIKE '%' || :query || '%' OR explanation LIKE '%' || :query || '%'")
+    @Query("SELECT * FROM questions WHERE stem LIKE '%' || :query || '%' OR explanation LIKE '%' || :query || '%' ORDER BY rowid ASC")
     fun searchQuestions(query: String): Flow<List<QuestionEntity>>
 }
 
