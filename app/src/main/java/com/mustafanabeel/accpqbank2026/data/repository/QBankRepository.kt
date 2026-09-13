@@ -190,9 +190,9 @@ class QBankRepository(private val context: Context) {
 
     suspend fun getQuestionsForSession(config: SessionConfig): List<QuestionEntity> =
         withContext(Dispatchers.IO) {
-            // getUsableQuestions() is ordered by rowid, which is the same order
-            // as the repaired ACCP source JSON. Keep it untouched unless the
-            // caller explicitly asks for a random Quick Session.
+            // Start from the repaired ACCP source order. Instant/study sessions keep
+            // that order, while Exam mode is always fully randomized after all
+            // chapter/type/status filters are applied.
             var pool = questionDao.getUsableQuestions().first()
 
             if (config.selectedChapterIds.isNotEmpty()) {
@@ -219,7 +219,8 @@ class QBankRepository(private val context: Context) {
                 else -> pool
             }
 
-            val orderedPool = if (config.shuffleQuestions) pool.shuffled() else pool
+            val shouldShuffle = config.mode == "exam" || config.shuffleQuestions
+            val orderedPool = if (shouldShuffle) pool.shuffled() else pool
 
             if (config.questionCount > 0 && config.questionCount < orderedPool.size) {
                 orderedPool.take(config.questionCount)
