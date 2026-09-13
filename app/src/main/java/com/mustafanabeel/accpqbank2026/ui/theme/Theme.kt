@@ -1,6 +1,5 @@
 package com.mustafanabeel.accpqbank2026.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -14,7 +13,7 @@ private val DarkColorScheme = darkColorScheme(
     secondary = DarkSlateSecondary,
     onSecondary = DarkSlateOnSecondary,
     secondaryContainer = DarkSlateSecondaryContainer,
-    onSecondaryContainer = DarkSlateSecondaryContainer,
+    onSecondaryContainer = DarkSlateOnSecondaryContainer,
     tertiary = CyanTertiary,
     onTertiary = CyanOnTertiary,
     background = DarkBackground,
@@ -46,7 +45,7 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun AccpTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
