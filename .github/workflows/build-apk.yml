@@ -32,6 +32,22 @@ jobs:
             app/src/main/assets/questions.json.gz \
             /tmp/questions.json.gz
           mv /tmp/questions.json.gz app/src/main/assets/questions.json.gz
+          python - <<'PY'
+          import gzip, hashlib, pathlib, re
+
+          asset = pathlib.Path('app/src/main/assets/questions.json.gz')
+          raw = gzip.open(asset, 'rb').read()
+          digest = hashlib.sha256(raw).hexdigest()
+
+          source = pathlib.Path('app/src/main/java/com/mustafanabeel/accpqbank2026/data/repository/QBankRepository.kt')
+          text = source.read_text(encoding='utf-8')
+          pattern = r'(const val EXPECTED_JSON_SHA256 =\s*\n\s*")[0-9a-f]{64}(")'
+          text, changed = re.subn(pattern, lambda m: m.group(1) + digest + m.group(2), text, count=1)
+          if changed != 1:
+              raise SystemExit('Could not patch Android question-bank integrity hash')
+          source.write_text(text, encoding='utf-8')
+          print('android_json_sha256', digest)
+          PY
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
