@@ -194,6 +194,10 @@ class QBankRepository(private val context: Context) {
 
     suspend fun getQuestionsForSession(config: SessionConfig): List<QuestionEntity> =
         withContext(Dispatchers.IO) {
+            // The DAO returns questions in the exact source/asset insertion order.
+            // Preserve that order for chapter study, Assessment-only, Case-only,
+            // bookmarks, incorrect-question review, and any "all questions" session.
+            // This keeps multi-question cases together exactly like the fixed web app.
             var pool = questionDao.getUsableQuestions().first()
 
             if (config.selectedChapterIds.isNotEmpty()) {
@@ -220,11 +224,21 @@ class QBankRepository(private val context: Context) {
                 else -> pool
             }
 
-            val shuffled = pool.shuffled()
-            if (config.questionCount > 0 && config.questionCount < shuffled.size) {
-                shuffled.take(config.questionCount)
+            // Randomize only the true Quick Session: all types, all chapters,
+            // normal status filter, and a limited question count. Any explicit
+            // Assessment/Case/chapter selection stays in ACCP source order.
+            val isQuickRandomSession =
+                config.questionCount > 0 &&
+                config.questionType == "all" &&
+                config.selectedChapterIds.isEmpty() &&
+                config.statusFilter == "all"
+
+            val orderedPool = if (isQuickRandomSession) pool.shuffled() else pool
+
+            if (config.questionCount > 0 && config.questionCount < orderedPool.size) {
+                orderedPool.take(config.questionCount)
             } else {
-                shuffled
+                orderedPool
             }
         }
 
