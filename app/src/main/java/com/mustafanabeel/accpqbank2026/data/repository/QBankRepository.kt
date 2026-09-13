@@ -26,7 +26,8 @@ data class SessionConfig(
     val statusFilter: String = "all",
     val questionCount: Int = 20,
     val timedMode: Boolean = false,
-    val timeLimitMinutes: Int = 30
+    val timeLimitMinutes: Int = 30,
+    val shuffleQuestions: Boolean = false
 )
 
 class QBankRepository(private val context: Context) {
@@ -57,8 +58,6 @@ class QBankRepository(private val context: Context) {
             val chapterCount = chapterDao.getChapterCount()
             val installedHash = seedPreferences.getString(INSTALLED_HASH_KEY, null)
 
-            // The broken export also had 533 rows, but 199 were fabricated.
-            // A trusted content hash detects and replaces that stale Room data.
             if (
                 currentCount != EXPECTED_QUESTION_COUNT ||
                 chapterCount != EXPECTED_CHAPTER_COUNT ||
@@ -165,9 +164,6 @@ class QBankRepository(private val context: Context) {
     }
 
     private fun readBundledQuestionJson(): String {
-        // AAPT recognizes a .gz asset, inflates it while packaging, and strips
-        // the .gz suffix. Read that packaged JSON first, while keeping a gzip
-        // fallback for environments that preserve the original asset name.
         val packagedJson = runCatching {
             context.assets.open(PACKAGED_ASSET_NAME)
         }.getOrNull()
@@ -194,10 +190,9 @@ class QBankRepository(private val context: Context) {
 
     suspend fun getQuestionsForSession(config: SessionConfig): List<QuestionEntity> =
         withContext(Dispatchers.IO) {
-            // The DAO returns questions in the exact source/asset insertion order.
-            // Preserve that order for chapter study, Assessment-only, Case-only,
-            // bookmarks, incorrect-question review, and any "all questions" session.
-            // This keeps multi-question cases together exactly like the fixed web app.
+            // getUsableQuestions() is ordered by rowid, which is the same order
+            // as the repaired ACCP source JSON. Keep it untouched unless the
+            // caller explicitly asks for a random Quick Session.
             var pool = questionDao.getUsableQuestions().first()
 
             if (config.selectedChapterIds.isNotEmpty()) {
@@ -224,16 +219,7 @@ class QBankRepository(private val context: Context) {
                 else -> pool
             }
 
-            // Randomize only the true Quick Session: all types, all chapters,
-            // normal status filter, and a limited question count. Any explicit
-            // Assessment/Case/chapter selection stays in ACCP source order.
-            val isQuickRandomSession =
-                config.questionCount > 0 &&
-                config.questionType == "all" &&
-                config.selectedChapterIds.isEmpty() &&
-                config.statusFilter == "all"
-
-            val orderedPool = if (isQuickRandomSession) pool.shuffled() else pool
+            val orderedPool = if (config.shuffleQuestions) pool.shuffled() else pool
 
             if (config.questionCount > 0 && config.questionCount < orderedPool.size) {
                 orderedPool.take(config.questionCount)
