@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - "app/**"
+      - "tools/build_web_data.py"
       - "gradle/**"
       - "*.gradle.kts"
       - "gradle.properties"
@@ -17,13 +18,20 @@ permissions:
 
 jobs:
   build-debug-apk:
-    name: Build verified debug APK
+    name: Build verified dark-mode APK
     runs-on: ubuntu-latest
     timeout-minutes: 35
 
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
+      - name: Rebuild complete question bank for Android
+        run: |
+          python tools/build_web_data.py \
+            app/src/main/assets/questions.json.gz \
+            /tmp/questions.json.gz
+          mv /tmp/questions.json.gz app/src/main/assets/questions.json.gz
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -59,7 +67,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ACCP-QBank-2026-debug
+          name: ACCP-QBank-2026-Dark-Fixed
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
