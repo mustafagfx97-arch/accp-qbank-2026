@@ -99,9 +99,7 @@ class QBankViewModel(application: Application) : AndroidViewModel(application) {
         val correctCount = latestByQuestion.values.count { it.isCorrect }
         val accuracy = if (attemptedCount > 0) (correctCount * 100) / attemptedCount else 0
 
-        val qMap = questions.associateBy { it.id }
         val chStats = mutableMapOf<String, ChapterStat>()
-
         val questionsByChapter = questions.groupBy { it.chapterId }
         for ((chId, chQuestions) in questionsByChapter) {
             val chAttempted = chQuestions.count { latestByQuestion.containsKey(it.id) }
@@ -164,7 +162,8 @@ class QBankViewModel(application: Application) : AndroidViewModel(application) {
             SessionConfig(
                 mode = mode,
                 selectedChapterIds = setOf(chapterId),
-                questionCount = 0 // all questions in this chapter
+                questionCount = 0,
+                shuffleQuestions = false
             ),
             onReady = onReady
         )
@@ -174,7 +173,8 @@ class QBankViewModel(application: Application) : AndroidViewModel(application) {
         startSession(
             SessionConfig(
                 mode = "instant",
-                questionCount = 10
+                questionCount = 10,
+                shuffleQuestions = true
             ),
             onReady = onReady
         )
@@ -185,7 +185,8 @@ class QBankViewModel(application: Application) : AndroidViewModel(application) {
             SessionConfig(
                 mode = "instant",
                 statusFilter = "bookmarked",
-                questionCount = 0
+                questionCount = 0,
+                shuffleQuestions = false
             ),
             onReady = onReady
         )
@@ -196,7 +197,8 @@ class QBankViewModel(application: Application) : AndroidViewModel(application) {
             SessionConfig(
                 mode = "instant",
                 statusFilter = "incorrect",
-                questionCount = 0
+                questionCount = 0,
+                shuffleQuestions = false
             ),
             onReady = onReady
         )
@@ -220,7 +222,7 @@ class QBankViewModel(application: Application) : AndroidViewModel(application) {
 
         val isInstant = current.config.mode == "instant"
         val isAlreadySubmitted = current.submittedInstant.contains(question.id)
-        if (isInstant && isAlreadySubmitted) return // cannot re-answer in instant mode
+        if (isInstant && isAlreadySubmitted) return
 
         val newAnswers = current.selectedAnswers.toMutableMap()
         newAnswers[question.id] = option
@@ -293,7 +295,6 @@ class QBankViewModel(application: Application) : AndroidViewModel(application) {
         val current = _quizState.value
         var correctCount = 0
 
-        // In Exam mode, record all attempts now
         viewModelScope.launch {
             for (q in current.questions) {
                 val selected = current.selectedAnswers[q.id]
